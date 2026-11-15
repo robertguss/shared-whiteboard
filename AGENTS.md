@@ -1,6 +1,6 @@
 # Shared whiteboard: agent guide
 
-This repo holds one project: a visual work surface that a person and AI agents both read and edit. It is the project's knowledge base now and will hold its code later.
+This repo holds one project: a database that acts as an external form of one person's brain across all their projects and ideas, which AI agents read, understand and add to. It began as a visual whiteboard, and the visual views remain ways of showing the data. It is the project's knowledge base now and will hold its code later.
 
 The knowledge base is an LLM wiki, after Andrej Karpathy's pattern (`raw/sources/2026-11-15-karpathy-llm-wiki.md`). The agent writes and maintains the wiki. The person supplies sources, asks questions and decides.
 
@@ -20,7 +20,7 @@ The knowledge base is an LLM wiki, after Andrej Karpathy's pattern (`raw/sources
 
 1. `raw/` is immutable. Never edit or delete a file there after its first commit. Correct a mistake with a new file that names the old one.
 2. This repo is public. A third-party source goes in `raw/sources/` as a stub: URL, date retrieved, short quoted excerpts, and a factual summary. Store a full copy only when the licence allows it or the material is ours.
-3. Nothing from a private source goes in this repo unless the person says so. When in doubt, leave it out and say what was left out.
+3. Nothing from a private source goes in this repo unless the person says so. When in doubt, leave it out and say what was left out. Private working material lives outside the repo in `~/code/shared-whiteboard-private/`, which is not under version control: extracts of the person's agent sessions, findings about their projects, and names of private repositories.
 4. Every claim in `wiki/` either cites a file in `raw/` or is marked `unverified`. A recommendation the person has not confirmed is marked `proposed`.
 5. Wiki pages live flat in `wiki/` with kebab-case names. Add folders only when the index stops being readable.
 6. Link pages with relative markdown links so they work on GitHub.

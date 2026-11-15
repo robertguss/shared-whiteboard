@@ -41,7 +41,7 @@ Details: [requirements](requirements.md), [shape options](shape-options.md), [me
 
 ## Next
 
-Pin down what a valuable connection is, from a real example. Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
+Robert judges the connections from the [hand-run test](hand-run-test.md) and says why earlier attempts at this idea stopped. Decide whether a simple version runs daily alongside the engine research. Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
 
 ## An idea to hold
 

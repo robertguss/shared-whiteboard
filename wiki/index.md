@@ -9,6 +9,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [overview](overview.md) | What this project is, what is decided, what is proposed, what is next | 2026-11-15 |
 | [requirements](requirements.md) | What Robert has asked for, traced to their words | 2026-11-15 |
 | [memory model](memory-model.md) | The data under the views, modelled on human memory; proposed | 2026-11-15 |
+| [hand-run test](hand-run-test.md) | What finding connections by hand taught the design: units, links, operations, tests | 2026-11-15 |
 | [open questions](open-questions.md) | Fourteen undecided questions with the agent's lean on each | 2026-11-15 |
 
 ## Comparisons
@@ -37,6 +38,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [engine research kickoff](../raw/sessions/2026-11-15-engine-research-kickoff.md) | Robert chooses memory behaviour and asks for engine research, 15 November 2026 |
 | [north star open](../raw/sessions/2026-11-15-north-star-open.md) | Storage core stays in scope; the north star is not yet known, 15 November 2026 |
 | [external brain](../raw/sessions/2026-11-15-external-brain.md) | Robert widens the scope to all projects and ideas, 15 November 2026 |
+| [hand-run test](../raw/sessions/2026-11-15-hand-run-test.md) | Agents and a three-model council read Robert's sessions and repositories, 15 November 2026 |
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |
