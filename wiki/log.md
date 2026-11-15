@@ -21,3 +21,11 @@ Created `overview.md`, `requirements.md`, `shape-options.md`, `existing-tools.md
 ## [2026-11-15] decision | Shape B, board plus views
 
 Robert chose B after trying prototype 001. Record: `raw/sessions/2026-11-15-shape-decision.md`. Updated `shape-options.md`, `overview.md`, `open-questions.md` and `index.md`. Wiki pages now refer to Robert as "they"; pronouns were never stated.
+
+## [2026-11-15] session | Data first, and a database modelled on the brain
+
+Robert proposed designing the data first, with the board and other layouts as displays of it, and modelling the data on the human brain. Record: `raw/sessions/2026-11-15-data-first-reframe.md`. Nothing new decided.
+
+## [2026-11-15] ingest | Rieseberg, TheBrain, brain-inspired memory scan
+
+Three stubs in `raw/sources/`. Wrote `memory-model.md`. Added TheBrain and a second look at Arango to `existing-tools.md`. Added two questions to `open-questions.md`. Contradiction flagged: the overview said "no graph database"; the data is a graph, so it now says "no Arango or other server database".

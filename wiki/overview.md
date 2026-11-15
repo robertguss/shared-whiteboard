@@ -1,7 +1,7 @@
 ---
 type: overview
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
@@ -23,14 +23,17 @@ Brainstorming with AI produces markdown faster than a person can hold it in thei
 | The main surface is a free board where notes can be placed anywhere. | Decided by Robert |
 | Notes also carry status and date, so timeline and status are other views of the same notes. | Decided by Robert (shape B) |
 | The board is a plain file in the project's repo. | Proposed |
-| No existing tool is adopted; three ideas are borrowed. | Proposed |
-| No graph database. | Proposed |
+| The data comes first; the board and other layouts are ways of displaying it. | Raised by Robert, being explored |
+| The data is modelled on how human memory works. | Raised by Robert, being explored. See [memory model](memory-model.md). |
+| That means a new data model, not a new storage engine. | Proposed |
+| No existing tool is adopted; five ideas are borrowed. | Proposed |
+| No Arango or other server database. | Proposed |
 
-Details: [requirements](requirements.md), [shape options](shape-options.md), [existing tools](existing-tools.md).
+Details: [requirements](requirements.md), [shape options](shape-options.md), [memory model](memory-model.md), [existing tools](existing-tools.md).
 
 ## Next
 
-Work through the [open questions](open-questions.md), starting with how the person edits, then write a requirements plan.
+Settle how literally "like the brain" is meant, then work through the rest of the [open questions](open-questions.md), then write a requirements plan.
 
 ## An idea to hold
 
