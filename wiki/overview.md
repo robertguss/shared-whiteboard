@@ -1,7 +1,7 @@
 ---
 type: overview
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
@@ -36,7 +36,6 @@ One person's projects and ideas overlap and inform one another. There is no sing
 | The project is meant to be ambitious, and learning and enjoyment are goals in themselves. | Stated by Robert |
 | No existing tool is adopted; five ideas are borrowed. | Proposed |
 | No Arango or other server database. | Proposed |
-
 | Robert has returned to this idea many times; the recurrence is evidence the problem is real, and it is to be solved now. | Stated by Robert |
 | The record of Robert's thinking must never restart; engines and views are experiments over it. | Proposed. See [the problem](the-problem.md). |
 
@@ -44,7 +43,7 @@ Details: [the problem](the-problem.md), [requirements](requirements.md), [shape 
 
 ## Next
 
-Robert confirms or corrects [the problem](the-problem.md): that the record of their thinking is the thing that must never restart, and that engines and views are experiments over it. Then a requirements plan for the first working version: the record plus a regular pass that proposes connections. Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
+Robert confirms or corrects [the problem](the-problem.md): that the record of their thinking is the thing that must never restart, and that engines and views are experiments over it. Then a requirements plan for the first working version: the record plus a regular pass that proposes connections. The engine research continues beside it: read the key papers in full and work through the [open questions](open-questions.md).
 
 ## An idea to hold
 

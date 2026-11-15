@@ -11,11 +11,11 @@ Robert has returned to this idea many times over about two and a half years, in 
 
 ## The need that stayed the same
 
-Across the attempts, the same things are asked for in nearly the same words:
+Across the attempts, the same things are asked for in nearly the same words. The wording below is paraphrased, because most of the earlier writing is private:
 
 | Need | How it was put |
 | --- | --- |
-| A place where the person and an AI think together | "shared thinking space", "thinking partner", "partner, not tool" |
+| A place where the person and an AI think together | A space for thinking with the AI as a partner, not a tool that takes orders |
 | Nothing starts from zero | Ideas get lost; sessions die; the AI should continue work, not begin again |
 | One set of data, read two ways | The person sees a picture; the agent reads structure; it is the same data |
 | Across projects and across time | One graph, not a board per project; ideas connect across projects and months |
@@ -29,8 +29,8 @@ The form: a note vault, a canvas app, a chat-first app, memory for the coding ag
 
 | Reason | Evidence | Strength |
 | --- | --- | --- |
-| The problem grows with the way Robert works. The more agents do, the more the person is the only place where things join up. | Robert's own words in two unrelated projects: "I have to be the hub", and connections exist only "in my own human brain". | Strong |
-| Two needs were bundled and each form served one: memory for the agent, or a picture for the person. | The forms alternate between the two. "Same data, two interfaces" is stated again and again and never reached in use. | Strong |
+| The problem grows with the way Robert works. The more agents do, the more the person is the only place where things join up. | Robert said it in two unrelated projects: once about getting several models to work together, where the person had to carry everything between them, and once here, where connections exist only "in my own human brain". | Strong |
+| Two needs were bundled and each form served one: memory for the agent, or a picture for the person. | The forms alternate between the two. The aim of one set of data with two ways of reading it is stated again and again and never reached in use. | Strong |
 | Every attempt started empty. | No attempt imported anything from the one before. Each used a new store. Only the vocabulary of idea, question and decision survived. | Strong, and the most useful |
 | Building replaced using. | Most attempts were active for days. None has a record of being used. | Medium |
 | The AI tooling kept changing underneath. | Several attempts cite a new capability as their reason. But the need is older than all of them. | Weak |

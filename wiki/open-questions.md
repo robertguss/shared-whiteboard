@@ -5,7 +5,7 @@ sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-s
 ---
 # Open questions
 
-In rough order of how much each one changes what gets built. Settled: the shape of the views ([shape options](shape-options.md)), and that it is one brain across all of the person's work, not one per project.
+In rough order of how much each one changes what gets built. Before any of them: whether Robert accepts the statement of [the problem](the-problem.md), that the record must never restart and engines and views are experiments over it. Settled: the shape of the views ([shape options](shape-options.md)), and that it is one brain across all of the person's work, not one per project.
 
 | # | Question | Why it matters | Agent's lean |
 | --- | --- | --- | --- |
