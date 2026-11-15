@@ -65,3 +65,7 @@ Robert accepted the statement tentatively, asked what "engines and views are exp
 ## [2026-11-15] session | Agent transcripts as the record
 
 Robert proposed using the agent session files from both machines as the append-only record, copied to one bucket, and starting on the engine. The agent agreed with three changes: the copy never deletes, judgements get their own log, and the first engine stage reads the tools' formats. Found that the tool deletes session files after 30 days by default. Record: `raw/sessions/2026-11-15-transcripts-as-the-record.md`.
+
+## [2026-11-15] decision | SQLite first
+
+Robert decided the first engine is a throwaway on SQLite, run on their real session files, with a custom storage core designed from what it shows. Session retention on this machine set to 100 years. Record: `raw/sessions/2026-11-15-sqlite-first.md`.

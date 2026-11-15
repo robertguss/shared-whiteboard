@@ -1,7 +1,7 @@
 ---
 type: overview
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
@@ -28,6 +28,8 @@ One person's projects and ideas overlap and inform one another. There is no sing
 | The data comes first; the board and other layouts are ways of displaying it. | Decided by Robert |
 | The data is modelled on human memory: linked structure plus memory behaviour. | Decided by Robert. See [memory model](memory-model.md). |
 | Whether to design a new database engine for it. | Open. Robert wants to consider it. First research pass: [engine research](engine-research.md). |
+| The first engine is a throwaway on SQLite, run on Robert's real session files. A custom storage core is designed from what it shows. | Decided by Robert |
+| The source of the record is the agent session files from both of Robert's machines, copied to one bucket. | Proposed by Robert |
 | Brain-like memory for an agent alone is crowded; memory for a person and an agent thinking together is open. | Proposed, from one research pass |
 | The storage core is part of the research, because its design may influence the memory and association layer. | Decided by Robert |
 | It covers all of Robert's projects and ideas in one place. Mo is one part of it. | Decided by Robert |
@@ -43,7 +45,7 @@ Details: [the problem](the-problem.md), [requirements](requirements.md), [shape 
 
 ## Next
 
-Robert has accepted [the problem](the-problem.md) for now. Next: decide what the first working version does for Robert on its first day, then a requirements plan for the first working version: the record plus a regular pass that proposes connections. The engine research continues beside it: read the key papers in full and work through the [open questions](open-questions.md).
+Robert has accepted [the problem](the-problem.md) for now. Next: Robert confirms the scope of the first engine, then a requirements plan for the first working version: the record plus a regular pass that proposes connections. The engine research continues beside it: read the key papers in full and work through the [open questions](open-questions.md).
 
 ## An idea to hold
 
