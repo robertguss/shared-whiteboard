@@ -53,3 +53,7 @@ Robert widened the scope from one project to all their projects and ideas: a dat
 ## [2026-11-15] session | Hand-run test with a three-model council
 
 At Robert's suggestion, agents read their agent sessions on this machine and their GitHub repositories, and a council of three models checked the result. Record: `raw/sessions/2026-11-15-hand-run-test.md`. Wrote `hand-run-test.md` with the design lessons only; the findings are private and kept outside the repo. Contradiction flagged: `engine-research.md` puts the project's value in engine operations, while all three council members advise running a simple version daily before engine work.
+
+## [2026-11-15] session | Why the idea keeps coming back
+
+Robert set aside why earlier attempts stopped and asked why the idea recurs. An agent read what Robert wrote at the start of each earlier attempt; the reading is private. Wrote `the-problem.md`. Central observation: the need is cumulative and every attempt started empty. Record: `raw/sessions/2026-11-15-why-it-keeps-coming-back.md`.
