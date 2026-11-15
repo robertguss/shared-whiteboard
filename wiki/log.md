@@ -69,3 +69,7 @@ Robert proposed using the agent session files from both machines as the append-o
 ## [2026-11-15] decision | SQLite first
 
 Robert decided the first engine is a throwaway on SQLite, run on their real session files, with a custom storage core designed from what it shows. Session retention on this machine set to 100 years. Record: `raw/sessions/2026-11-15-sqlite-first.md`.
+
+## [2026-11-15] ingest | cass and cass-memory
+
+Read at Robert's request before confirming the scope of the first engine. Stub: `raw/sources/2026-11-15-cass.md`. Added a section to `existing-tools.md`. cass covers the lower half of the first engine: collecting, keeping and reading session files. cass-memory solves a different problem, rules for coding agents. Both carry a licence rider against OpenAI and Anthropic; no code is copied here. Neither was installed or run.
