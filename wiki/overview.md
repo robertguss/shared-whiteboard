@@ -23,9 +23,10 @@ Brainstorming with AI produces markdown faster than a person can hold it in thei
 | The main surface is a free board where notes can be placed anywhere. | Decided by Robert |
 | Notes also carry status and date, so timeline and status are other views of the same notes. | Decided by Robert (shape B) |
 | The board is a plain file in the project's repo. | Proposed |
-| The data comes first; the board and other layouts are ways of displaying it. | Raised by Robert, being explored |
-| The data is modelled on how human memory works. | Raised by Robert, being explored. See [memory model](memory-model.md). |
-| That means a new data model, not a new storage engine. | Proposed |
+| The data comes first; the board and other layouts are ways of displaying it. | Decided by Robert |
+| The data is modelled on human memory: linked structure plus memory behaviour. | Decided by Robert. See [memory model](memory-model.md). |
+| Whether to design a new database engine for it. | Open. Robert wants to consider it; research comes first. |
+| The project is meant to be ambitious, and learning and enjoyment are goals in themselves. | Stated by Robert |
 | No existing tool is adopted; five ideas are borrowed. | Proposed |
 | No Arango or other server database. | Proposed |
 

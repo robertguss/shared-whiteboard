@@ -29,3 +29,7 @@ Robert proposed designing the data first, with the board and other layouts as di
 ## [2026-11-15] ingest | Rieseberg, TheBrain, brain-inspired memory scan
 
 Three stubs in `raw/sources/`. Wrote `memory-model.md`. Added TheBrain and a second look at Arango to `existing-tools.md`. Added two questions to `open-questions.md`. Contradiction flagged: the overview said "no graph database"; the data is a graph, so it now says "no Arango or other server database".
+
+## [2026-11-15] decision | Structure plus memory behaviour; engine question opened
+
+Robert chose linked structure plus memory behaviour, confirmed shape B after opening the prototype, and asked for research into database engines and into computer science and biology papers before deciding whether to design an engine. Record: `raw/sessions/2026-11-15-engine-research-kickoff.md`. The agent's earlier "not a new storage engine" is withdrawn as a conclusion and kept as one side of an open question.

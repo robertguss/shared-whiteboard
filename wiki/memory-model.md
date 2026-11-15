@@ -1,11 +1,11 @@
 ---
 type: concept
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-data-first-reframe.md, raw/sources/2026-11-15-brain-inspired-memory-scan.md, raw/sources/2026-11-15-thebrain.md, raw/sources/2026-11-15-rieseberg-ambition.md]
+sources: [raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sources/2026-11-15-brain-inspired-memory-scan.md, raw/sources/2026-11-15-thebrain.md, raw/sources/2026-11-15-rieseberg-ambition.md]
 ---
 # Memory model: the data under the views
 
-**Standing:** proposed. Robert raised the direction; nothing on this page is confirmed.
+**Standing:** direction decided by Robert: linked structure plus memory behaviour. The details below are proposed.
 
 **The idea:** design the data first. The board, timeline and status views from [shape B](shape-options.md) are ways of showing it. The data is modelled on how human memory works, so it suits brainstorming.
 
@@ -33,9 +33,12 @@ This repo already works this way: `raw/` holds episodes and `wiki/` holds concep
 
 Facts are exact and salience is fuzzy. Status, dates and links are plain data. Strength and fading change only what is shown first. A roadmap cannot be allowed to forget that a feature shipped.
 
+## Build an engine or not
+
+Open, and research decides it. The agent first advised against a new storage engine, because a personal brain is thousands of thoughts and an ordinary single-file database holds that easily. Robert wants to consider one anyway: the goals include ambition, learning and enjoyment, not only need. The test the agent proposes: an engine is worth designing if the memory behaviour asks for something existing engines do badly.
+
 ## What this is not (proposed)
 
-- Not a new storage engine. A personal brain is thousands of thoughts, which an ordinary single-file database holds easily. The scan found no project whose contribution is a storage engine.
 - Not a simulation of a brain. These are models of memory borrowed from psychology, simplified.
 - Not Arango. See [existing tools](existing-tools.md).
 
