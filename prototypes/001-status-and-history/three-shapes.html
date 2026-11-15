@@ -1,0 +1,308 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Mo whiteboard shapes</title><style>
+.wb{font-family:var(--font-sans);color:var(--foreground);font-size:13px;line-height:1.35}
+.wb [hidden]{display:none}
+.wb button{font:inherit;color:inherit;background:transparent;border:1px solid var(--border);border-radius:var(--radius);padding:6px 10px;cursor:pointer}
+.wb button[aria-pressed=true]{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary)}
+.wb button:disabled{opacity:.5;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 8px}
+.blurb{margin:0 0 8px;opacity:.85;min-height:54px}
+.say{margin:0 0 8px;padding:8px 10px;border-left:3px solid var(--info);background:var(--secondary);border-radius:var(--radius)}
+.stage{position:relative;height:900px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;touch-action:none;cursor:grab;background-image:radial-gradient(var(--border) 1px,transparent 1px);background-size:20px 20px}
+.world{position:absolute;left:0;top:0;transform-origin:0 0}
+.links{position:absolute;left:0;top:0;overflow:visible}
+.links line{stroke:var(--foreground);stroke-opacity:.4;stroke-width:1.5;stroke-dasharray:4 3}
+.zoom{position:absolute;right:8px;top:8px;display:flex;gap:4px;z-index:2}
+.wb .zoom button{background:var(--card);padding:4px 9px}
+.note,.card{position:relative;box-sizing:border-box;padding:5px 6px 5px 22px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--c);border-radius:6px}
+.note{position:absolute;width:150px;min-height:46px;cursor:grab;user-select:none;-webkit-user-select:none;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+.note b,.card b{display:block;font-weight:600;font-size:11.5px}
+.note small,.card small{display:block;font-size:10px;opacity:.7}
+.head{border-left-width:1px;padding-left:8px;background:var(--secondary);width:156px}
+.dot{position:absolute;left:5px;top:7px;width:11px;height:11px;border-radius:50%;background:var(--c);cursor:pointer}
+.s-built{--c:var(--success)}
+.s-doing{--c:var(--info)}
+.s-next{--c:color-mix(in srgb,var(--foreground) 40%,transparent)}
+.s-research{--c:var(--warning)}
+.s-dropped{--c:var(--destructive)}
+.s-dropped b{text-decoration:line-through;opacity:.6}
+.fresh{outline:2px dashed var(--info);outline-offset:2px}
+.group,.tray{position:absolute;box-sizing:border-box;border:1px dashed var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:600}
+.tray{border-color:var(--info)}
+.tl section{display:grid;grid-template-columns:92px minmax(0,1fr);gap:4px 10px;padding:8px 0;border-top:1px solid var(--border)}
+.tl .when{font-size:11px;opacity:.7;padding-top:2px}
+.tl h4,.col h4{margin:0 0 6px;font-size:12.5px}
+.badge{font-size:10px;border:1px solid var(--border);border-radius:99px;padding:1px 7px;margin-left:6px;font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip,.mn{display:inline-flex;align-items:center;border:1px solid var(--border);border-radius:99px;padding:3px 9px 3px 7px;font-size:11.5px;background:var(--card)}
+.chip b,.mn b{font-weight:500}
+.chip small,.mn small{margin-left:6px;font-size:10px;opacity:.7}
+.chip .dot,.mn .dot,.legend .dot{position:static;flex:none;margin-right:6px}
+.today{padding:6px 10px;margin:4px 0;border-radius:var(--radius);background:var(--secondary);font-weight:600;font-size:12px}
+.scroll{overflow-x:auto;padding:4px}
+.board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;min-width:620px}
+.col h4{display:flex;justify-content:space-between}
+.card{margin-bottom:5px}
+.mm{position:relative;min-width:612px}
+.mm svg{position:absolute;left:0;top:0;overflow:visible}
+.mm path{fill:none;stroke:var(--border);stroke-width:1.5}
+.mn{position:absolute;height:22px;box-sizing:border-box;white-space:nowrap;padding-top:0;padding-bottom:0}
+.mn.ph{cursor:pointer}
+.mn.ph b{font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:8px;font-size:11px;opacity:.85}
+.legend span{display:inline-flex;align-items:center}
+.legend .dot{cursor:default}
+</style></head><body>
+<div class="wb">
+  <div class="row" id="tabs">
+    <button data-v="A">A · Free board only</button>
+    <button data-v="B">B · Board plus views</button>
+    <button data-v="C">C · Auto mind map</button>
+  </div>
+  <p class="blurb" id="blurb"></p>
+  <div class="row">
+    <span class="row" id="sub" style="margin:0">
+      <button data-b="canvas">Board</button>
+      <button data-b="timeline">Timeline</button>
+      <button data-b="board">Status board</button>
+    </span>
+    <button id="agent">Simulate an agent update</button>
+  </div>
+  <p class="say" id="say" hidden></p>
+  <div id="view"></div>
+  <div class="legend" id="legend"></div>
+</div>
+<script>
+(()=>{
+const S={built:'Built',doing:'In progress',next:'Next',research:'Needs research',dropped:'Dropped'};
+const ORDER=['0','1','2','3','4','5','6','7','8'];
+const P={
+  0:{n:'Reset',a:'11 Oct',b:'11 Oct'},
+  1:{n:'Design the core',a:'11 Oct',b:'24 Oct'},
+  2:{n:'Agents can write it',a:'12 Oct',b:'24 Oct'},
+  3:{n:'Services',a:'24 Oct',b:'1 Nov'},
+  4:{n:'Agents can see inside it',a:'2 Nov',b:'7 Nov',r:'v0.1'},
+  5:{n:'It evolves while running',a:'8 Nov',b:'11 Nov',r:'v0.2'},
+  6:{n:'Intent and autonomy',a:'12 Nov',b:'now',r:'v0.3'},
+  7:{n:'Fast',r:'v0.4'},
+  8:{n:'Ecosystem',r:'1.0'}
+};
+const T={lang:'Language and toolchain',ops:'Operating and upgrading',svc:'Services',proc:'Process and evidence',future:'Ahead'};
+const N=[
+  ['Clean foundation','0','built','lang'],
+  ['Core language design','1','built','lang'],
+  ['VM and Lean agree on 1M programs','1','built','lang'],
+  ['mo check / run / test','2','built','lang'],
+  ['mo format / fix','2','built','lang'],
+  ['mo guide','2','built','lang'],
+  ['service block','3','built','svc'],
+  ['SQLite saving and recovery','3','built','svc'],
+  ['MCP over HTTP','3','built','svc'],
+  ['mo serve','3','built','svc'],
+  ['Task-queue service','3','built','svc'],
+  ['Operator views','4','built','ops'],
+  ['State export','4','built','ops'],
+  ['Failure records','4','built','ops'],
+  ['mo replay / query / history','4','built','ops'],
+  ['Diagnostic evaluation 14 of 16','4','built','proc','7 Nov'],
+  ['Independent baseline','4','dropped','proc','5 Nov'],
+  ['New baseline for comparative claims','4','research','proc'],
+  ['Typed migration checking','5','built','ops'],
+  ['Checked restart','5','built','ops'],
+  ['Offline rehearsal','5','built','ops'],
+  ['Live activation','5','built','ops'],
+  ['mo push','5','built','ops'],
+  ['1,000-kill drill','5','built','proc','11 Nov'],
+  ['Intent and review door design','6','built','future','12 Nov'],
+  ['Preflight prototypes','6','built','future'],
+  ['Implement intent','6','next','future'],
+  ['Fast enough for serious services','7','next','future'],
+  ['Others build and share','8','next','future']
+].map((r,i)=>({id:'n'+i,t:r[0],p:r[1],s:r[2],th:r[3],d:r[4]}));
+const LINKS=[
+  ['MCP over HTTP','Operator views'],
+  ['SQLite saving and recovery','Checked restart'],
+  ['service block','Typed migration checking'],
+  ['Intent and review door design','Implement intent'],
+  ['Diagnostic evaluation 14 of 16','New baseline for comparative claims']
+].map(l=>l.map(t=>N.find(n=>n.t===t).id));
+const BLURB={
+  A:'One board. You place every note, and where a note sits is the only structure. Colour is the only status, and time is whatever layout you keep up by hand; here that is one row per phase. Try: drag notes, drag the background to pan, click a coloured dot.',
+  B:'The same free board, but every note also carries a phase, a status and a date. Time and status live in the other two views, so the board is free to group by theme. Try: change a status dot on the board, then open Timeline or Status board.',
+  C:'Structure only. The layout is computed from the hierarchy, so nothing drifts, but nothing can be placed by hand and links between branches have no home. Try: click a phase to fold it, click a dot to change status.'
+};
+const SAY={
+  A:'The agent added two notes and recoloured one. On a free board they wait in a tray at the bottom until one of you places them.',
+  B:'The agent added two notes and moved one to In progress. On the board they wait in a tray. Timeline and Status board already show them in the right place.',
+  C:'The agent added two notes and moved one to In progress. The tree made room for them by itself.'
+};
+const $=id=>document.getElementById(id);
+const el=(tag,cls,html)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e};
+const box=(e,r)=>{e.style.left=r.x+'px';e.style.top=r.y+'px';e.style.width=r.w+'px';e.style.height=r.h+'px'};
+const tag=n=>'P'+n.p;
+const span=ph=>ph.a?(ph.a===ph.b?ph.a:ph.a+' to '+ph.b):'Not started';
+const title=p=>p+' · '+P[p].n;
+const fresh=n=>n.fresh?' fresh':'';
+let variant='A',bview='canvas',agent=false;
+const shut=new Set(),cv={};
+
+function layoutA(){
+  const pos={};let y=10;
+  for(const p of ORDER){
+    pos['p'+p]={x:10,y};
+    const items=N.filter(n=>n.p===p&&!n.fresh);
+    items.forEach((n,i)=>{pos[n.id]={x:176+(i%4)*158,y:y+Math.floor(i/4)*54}});
+    y+=Math.max(1,Math.ceil(items.length/4))*54+10;
+  }
+  return {pos,w:808,h:y};
+}
+function layoutB(){
+  const pos={},groups=[];let h=0;
+  [['lang','ops'],['svc','future','proc']].forEach((col,c)=>{
+    let y=10;const x=10+c*352;
+    for(const th of col){
+      const items=N.filter(n=>n.th===th&&!n.fresh),rows=Math.ceil(items.length/2);
+      groups.push({label:T[th],x,y,w:340,h:34+rows*62});
+      items.forEach((n,i)=>{pos[n.id]={x:x+12+(i%2)*158,y:y+30+Math.floor(i/2)*62}});
+      y+=34+rows*62+12;
+    }
+    h=Math.max(h,y);
+  });
+  return {pos,groups,w:702,h};
+}
+function addTray(st){
+  st.tray={x:10,y:st.h+8,w:340,h:96};
+  N.filter(n=>n.fresh).forEach((n,i)=>{st.pos[n.id]={x:22+i*158,y:st.h+38}});
+  st.h+=112;
+}
+function state(v){
+  if(!cv[v]){cv[v]={x:8,y:8,k:0,...(v==='A'?layoutA():layoutB())};if(agent)addTray(cv[v])}
+  return cv[v];
+}
+function cycle(id){
+  const n=N.find(n=>n.id===id),k=Object.keys(S);
+  n.s=k[(k.indexOf(n.s)+1)%k.length];
+  render();
+}
+function canvas(v){
+  const st=state(v),stage=el('div','stage'),world=el('div','world'),els={};
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('class','links');svg.setAttribute('width',1);svg.setAttribute('height',1);
+  world.append(svg);
+  (st.groups||[]).forEach(g=>{const d=el('div','group',g.label);box(d,g);world.append(d)});
+  if(st.tray){const d=el('div','tray','Added by the agent. Not placed yet.');box(d,st.tray);world.append(d)}
+  if(v==='A')for(const p of ORDER)els['p'+p]=el('div','note head',`<b>${title(p)}</b><small>${span(P[p])}</small>`);
+  for(const n of N)els[n.id]=el('div',`note s-${n.s}${fresh(n)}`,`<i class="dot"></i><b>${n.t}</b>${v==='B'?`<small>${tag(n)} · ${S[n.s]}</small>`:''}`);
+  const put=id=>{els[id].style.left=st.pos[id].x+'px';els[id].style.top=st.pos[id].y+'px'};
+  for(const id in els){els[id].dataset.id=id;put(id);world.append(els[id])}
+  const links=()=>{svg.innerHTML=LINKS.map(([a,b])=>{const p=st.pos[a],q=st.pos[b];return `<line x1="${p.x+75}" y1="${p.y+23}" x2="${q.x+75}" y2="${q.y+23}"/>`}).join('')};
+  const apply=()=>{world.style.transform=`translate(${st.x}px,${st.y}px) scale(${st.k})`};
+  const fit=()=>{st.k=Math.min(1,(stage.clientWidth-16)/st.w);st.x=8;st.y=8;apply()};
+  const zoom=el('div','zoom');
+  [['−',()=>{st.k=Math.max(.3,st.k/1.25);apply()}],['+',()=>{st.k=Math.min(2,st.k*1.25);apply()}],['Fit',fit]].forEach(([t,f])=>{const b=el('button','',t);b.onclick=f;zoom.append(b)});
+  stage.append(world,zoom);
+  stage.onpointerdown=e=>{
+    if(e.target.closest('.zoom'))return;
+    const n=e.target.closest('.note');
+    if(e.target.classList.contains('dot')){if(N.some(x=>x.id===n.dataset.id))cycle(n.dataset.id);return}
+    stage.setPointerCapture(e.pointerId);
+    const p=n?st.pos[n.dataset.id]:st,f=n?st.k:1,sx=e.clientX,sy=e.clientY,ox=p.x,oy=p.y;
+    stage.onpointermove=m=>{p.x=ox+(m.clientX-sx)/f;p.y=oy+(m.clientY-sy)/f;if(n){put(n.dataset.id);links()}else apply()};
+    stage.onpointerup=stage.onpointercancel=()=>{stage.onpointermove=null};
+  };
+  links();
+  return {stage,show(){
+    if(!st.k)fit();
+    if(st.tray&&!st.shown){st.y=Math.min(8,stage.clientHeight-st.h*st.k-8);st.shown=true}
+    apply();
+  }};
+}
+function timeline(){
+  const w=el('div','tl');
+  for(const p of ORDER){
+    const ph=P[p];
+    if(p==='7')w.append(el('div','today','Today, 15 Nov. Everything below is still ahead.'));
+    const s=el('section'),r=el('div'),c=el('div','chips');
+    s.append(el('div','when',span(ph)));
+    r.append(el('h4','',`Phase ${title(p)}${ph.r?`<span class="badge">${ph.r}</span>`:''}`));
+    N.filter(n=>n.p===p).forEach(n=>{
+      const note=[n.s!=='built'?S[n.s]:'',n.d].filter(Boolean).join(', ');
+      c.append(el('span',`chip s-${n.s}${fresh(n)}`,`<i class="dot" data-id="${n.id}"></i><b>${n.t}</b>${note?`<small>${note}</small>`:''}`));
+    });
+    r.append(c);s.append(r);w.append(s);
+  }
+  return w;
+}
+function board(){
+  const sc=el('div','scroll'),b=el('div','board');
+  for(const k in S){
+    const col=el('div','col'),items=N.filter(n=>n.s===k);
+    col.append(el('h4','',`<span>${S[k]}</span><span>${items.length}</span>`));
+    items.forEach(n=>col.append(el('div',`card s-${n.s}${fresh(n)}`,`<i class="dot" data-id="${n.id}"></i><b>${n.t}</b><small>${tag(n)}</small>`)));
+    b.append(col);
+  }
+  sc.append(b);
+  return sc;
+}
+function mind(){
+  const sc=el('div','scroll'),mm=el('div','mm');let y=4,paths='';
+  const phs=ORDER.map(p=>{
+    const items=N.filter(n=>n.p===p),y0=y;
+    const kids=shut.has(p)?[]:items.map(n=>{const k={n,y};y+=28;return k});
+    if(!kids.length)y+=28;
+    y+=10;
+    return {p,items,kids,y:kids.length?(kids[0].y+kids[kids.length-1].y)/2:y0};
+  });
+  const ry=(phs[0].y+phs[phs.length-1].y)/2;
+  const curve=(x1,y1,x2,y2)=>`<path d="M${x1} ${y1+11}C${(x1+x2)/2} ${y1+11},${(x1+x2)/2} ${y2+11},${x2} ${y2+11}"/>`;
+  const node=(cls,x,ny,w,html)=>{const d=el('div','mn '+cls,html);d.style.left=x+'px';d.style.top=ny+'px';d.style.width=w+'px';mm.append(d);return d};
+  node('',0,ry,50,'<b>Mo</b>');
+  for(const ph of phs){
+    const done=ph.items.filter(n=>n.s==='built'||n.s==='dropped').length;
+    const roll=done===ph.items.length?'built':ph.items.some(n=>n.s==='built'||n.s==='doing')?'doing':'next';
+    paths+=curve(50,ry,80,ph.y);
+    node(`ph s-${roll}`,80,ph.y,236,`<i class="dot"></i><b>${title(ph.p)}</b><small>${done}/${ph.items.length}${shut.has(ph.p)?' ▸':''}</small>`).dataset.p=ph.p;
+    for(const k of ph.kids){
+      paths+=curve(316,ph.y,346,k.y);
+      node(`s-${k.n.s}${fresh(k.n)}`,346,k.y,262,`<i class="dot" data-id="${k.n.id}"></i><b>${k.n.t}</b>`);
+    }
+  }
+  mm.style.height=y+'px';
+  mm.insertAdjacentHTML('afterbegin',`<svg width="1" height="1">${paths}</svg>`);
+  sc.append(mm);
+  return sc;
+}
+function render(){
+  document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===variant));
+  document.querySelectorAll('#sub button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.b===bview));
+  $('blurb').textContent=BLURB[variant];
+  $('sub').hidden=variant!=='B';
+  $('say').hidden=!agent;
+  $('say').textContent=SAY[variant];
+  const view=$('view');
+  view.replaceChildren();
+  view.dataset.ceVariant=variant;
+  if(variant==='C')view.append(mind());
+  else if(variant==='B'&&bview==='timeline')view.append(timeline());
+  else if(variant==='B'&&bview==='board')view.append(board());
+  else{const c=canvas(variant);view.append(c.stage);c.show()}
+}
+$('tabs').onclick=e=>{if(e.target.dataset.v){variant=e.target.dataset.v;render()}};
+$('sub').onclick=e=>{if(e.target.dataset.b){bview=e.target.dataset.b;render()}};
+$('view').onclick=e=>{
+  const ph=e.target.closest('.ph');
+  if(e.target.dataset.id)cycle(e.target.dataset.id);
+  else if(ph){shut.has(ph.dataset.p)?shut.delete(ph.dataset.p):shut.add(ph.dataset.p);render()}
+};
+$('agent').onclick=e=>{
+  agent=true;e.target.disabled=true;e.target.textContent='Agent update applied';
+  N.find(n=>n.t==='Implement intent').s='doing';
+  N.push({id:'a1',t:'Example: intent file format',p:'6',s:'next',th:'future',fresh:true},{id:'a2',t:'Example: review door command',p:'6',s:'research',th:'future',fresh:true});
+  Object.values(cv).forEach(addTray);
+  render();
+};
+$('legend').innerHTML=Object.keys(S).map(k=>`<span class="s-${k}"><i class="dot"></i>${S[k]}</span>`).join('');
+render();
+})();
+</script>
+</body></html>
