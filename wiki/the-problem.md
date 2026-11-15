@@ -1,11 +1,11 @@
 ---
 type: concept
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-hand-run-test.md, raw/sessions/2026-11-15-external-brain.md]
+sources: [raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-record-and-experiments.md, raw/sessions/2026-11-15-hand-run-test.md, raw/sessions/2026-11-15-external-brain.md]
 ---
 # The problem, and why it keeps coming back
 
-**Standing:** proposed. Robert asked the question; the answer below is the agent's reading of Robert's own earlier writing, which is private and kept outside this repo. Robert has not confirmed it.
+**Standing:** accepted by Robert for now, tentatively ("let's go with that, I guess, for now"). The answer below is the agent's reading of Robert's own earlier writing, which is private and kept outside this repo.
 
 Robert has returned to this idea many times over about two and a half years, in many forms. They read that as evidence the problem is real and unsolved, and want it solved now.
 
@@ -45,6 +45,35 @@ The need is cumulative: connections across projects and across months. A thing t
 2. **Engines and views are experiments over the record.** They can be rewritten as often as Robert likes, and the record survives each rewrite. This keeps the ambition and removes the restart.
 3. **The first working thing is the record plus a regular pass that proposes connections,** started from what the hand-run test already extracted, and from the data left in the earlier attempts.
 4. **Use is measured from the first day.** See the tests in [hand-run test](hand-run-test.md).
+
+## What "experiments over the record" means
+
+There are three layers, and only the first is permanent.
+
+| Layer | What it is | Can it be thrown away? |
+| --- | --- | --- |
+| Record | What was thought, decided and tried, in plain files. Each item says who wrote it and when. New items are added; old items are not edited. | Never |
+| Engine | A database built by reading the record. It holds the links, the strength of each memory and the indexes that make questions fast. | Yes. Read the record again and build a new one. |
+| View | A board, a timeline or a status view, drawn from the engine. | Yes |
+
+Git works the same way. The commits are the record. `git log`, a blame view and a website that shows the repository are all built from the commits, and any of them can be replaced without losing a commit.
+
+The earlier attempts kept the data inside the tool: in one database, then another, then a vault. When the tool was dropped, the data went with it. Here the data sits outside every tool. "Experiment" means an engine can be written, tried, and replaced by a better one, and the second engine starts with everything the first one had.
+
+Forgetting belongs to the engine. A memory that fades is shown less often; it is not removed from the record.
+
+## How large the record gets
+
+Robert raised this. Measured on one machine over 18 days, 29 October to 15 November 2026:
+
+| What is kept | Size in 18 days | Per year at that rate |
+| --- | --- | --- |
+| Everything the agents produced, with tool output | 2.2 GB | about 45 GB |
+| Robert's own typed words | 0.4 MB | about 8 MB |
+
+So the concern is right if the record holds everything, and does not apply if it holds the thinking. The record holds the thinking: what was said, decided, tried and connected, each item pointing to the session or file it came from. The full session files stay where they already are.
+
+The real limit is reading, not disk space. No agent can read the whole record at the start of each session. Finding the right few items is the engine's job, and it is the reason the engine is worth designing.
 
 ## A tension to hold
 

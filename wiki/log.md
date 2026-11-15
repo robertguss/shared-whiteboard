@@ -57,3 +57,7 @@ At Robert's suggestion, agents read their agent sessions on this machine and the
 ## [2026-11-15] session | Why the idea keeps coming back
 
 Robert set aside why earlier attempts stopped and asked why the idea recurs. An agent read what Robert wrote at the start of each earlier attempt; the reading is private. Wrote `the-problem.md`. Central observation: the need is cumulative and every attempt started empty. Record: `raw/sessions/2026-11-15-why-it-keeps-coming-back.md`.
+
+## [2026-11-15] decision | Problem statement accepted for now
+
+Robert accepted the statement tentatively, asked what "engines and views are experiments" means, and raised the size of an append-only record. Added two sections to `the-problem.md`. Measured: 2.2 GB of agent session files in 18 days against 0.4 MB of Robert's own words, so the record holds the thinking and points to the session files. Record: `raw/sessions/2026-11-15-record-and-experiments.md`.

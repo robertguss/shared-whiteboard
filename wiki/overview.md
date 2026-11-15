@@ -37,13 +37,13 @@ One person's projects and ideas overlap and inform one another. There is no sing
 | No existing tool is adopted; five ideas are borrowed. | Proposed |
 | No Arango or other server database. | Proposed |
 | Robert has returned to this idea many times; the recurrence is evidence the problem is real, and it is to be solved now. | Stated by Robert |
-| The record of Robert's thinking must never restart; engines and views are experiments over it. | Proposed. See [the problem](the-problem.md). |
+| The record of Robert's thinking must never restart; engines and views are experiments over it. | Accepted by Robert for now, tentatively. See [the problem](the-problem.md). |
 
 Details: [the problem](the-problem.md), [requirements](requirements.md), [shape options](shape-options.md), [memory model](memory-model.md), [existing tools](existing-tools.md).
 
 ## Next
 
-Robert confirms or corrects [the problem](the-problem.md): that the record of their thinking is the thing that must never restart, and that engines and views are experiments over it. Then a requirements plan for the first working version: the record plus a regular pass that proposes connections. The engine research continues beside it: read the key papers in full and work through the [open questions](open-questions.md).
+Robert has accepted [the problem](the-problem.md) for now. Next: decide what the first working version does for Robert on its first day, then a requirements plan for the first working version: the record plus a regular pass that proposes connections. The engine research continues beside it: read the key papers in full and work through the [open questions](open-questions.md).
 
 ## An idea to hold
 
