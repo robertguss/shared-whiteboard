@@ -19,7 +19,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | --- | --- | --- |
 | [shape options](shape-options.md) | Free board, board plus views, or auto mind map; B, board plus views, was chosen | 2026-11-15 |
 | [engine research](engine-research.md) | What is taken, what is open, and where a new engine would be new | 2026-11-15 |
-| [existing tools](existing-tools.md) | Ten tools looked at; cass proposed for reading and keeping agent sessions; nine ideas borrowed | 2026-11-15 |
+| [existing tools](existing-tools.md) | Ten tools looked at, none adopted, nine ideas borrowed | 2026-11-15 |
 
 ## Entities
 
@@ -44,6 +44,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [record and experiments](../raw/sessions/2026-11-15-record-and-experiments.md) | Robert accepts the problem statement for now and asks about scale, 15 November 2026 |
 | [transcripts as the record](../raw/sessions/2026-11-15-transcripts-as-the-record.md) | Robert proposes starting from the agent session files on both machines, 15 November 2026 |
 | [SQLite first](../raw/sessions/2026-11-15-sqlite-first.md) | Robert decides the first engine is a throwaway on SQLite, 15 November 2026 |
+| [build our own reader](../raw/sessions/2026-11-15-build-our-own-reader.md) | Robert decides against cass as a dependency, 15 November 2026 |
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |

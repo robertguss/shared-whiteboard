@@ -73,3 +73,7 @@ Robert decided the first engine is a throwaway on SQLite, run on their real sess
 ## [2026-11-15] ingest | cass and cass-memory
 
 Read at Robert's request before confirming the scope of the first engine. Stub: `raw/sources/2026-11-15-cass.md`. Added a section to `existing-tools.md`. cass covers the lower half of the first engine: collecting, keeping and reading session files. cass-memory solves a different problem, rules for coding agents. Both carry a licence rider against OpenAI and Anthropic; no code is copied here. Neither was installed or run.
+
+## [2026-11-15] decision | Build our own reader
+
+Robert decided the project writes its own reader for agent session files, so that cass is not a dependency, and left the question of a fork to the agent. The agent decided against a fork, because of the licence rider and the size of cass. Record: `raw/sessions/2026-11-15-build-our-own-reader.md`.

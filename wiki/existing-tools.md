@@ -1,11 +1,11 @@
 ---
 type: comparison
 updated: 2026-11-15
-sources: [raw/sources/2026-11-15-tool-scan.md, raw/sources/2026-11-15-thebrain.md, raw/sources/2026-11-15-cass.md, raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-data-first-reframe.md]
+sources: [raw/sessions/2026-11-15-build-our-own-reader.md, raw/sources/2026-11-15-tool-scan.md, raw/sources/2026-11-15-thebrain.md, raw/sources/2026-11-15-cass.md, raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-data-first-reframe.md]
 ---
 # Existing tools
 
-**Conclusion (proposed):** adopt none of the visual tools and borrow five ideas from them. For reading and keeping agent sessions, try cass before building anything; see the second section. None of the tools was installed or run; this rests on READMEs and homepages.
+**Conclusion (proposed):** adopt none of the visual tools and borrow five ideas from them. For reading and keeping agent sessions, Robert decided the project builds its own reader and takes ideas only from cass; see the second section. None of the tools was installed or run; this rests on READMEs and homepages.
 
 | Tool | What it is | Free board | Status on notes | Timeline | Agent edits | Verdict |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -34,7 +34,7 @@ Looked at on 15 November 2026 at Robert's request, after the decision to start f
 
 | Tool | What it does | Overlap with the first engine | Verdict (proposed) |
 | --- | --- | --- | --- |
-| cass | Reads the session files of 34 agent tools into one common form in SQLite, searches them, pulls from other machines, and keeps its own copy because tools delete their logs | The whole lower half: collect, keep, read the formats, search | Try it on this machine before building that half. Active: pushed the day it was read. |
+| cass | Reads the session files of 34 agent tools into one common form in SQLite, searches them, pulls from other machines, and keeps its own copy because tools delete their logs | The whole lower half: collect, keep, read the formats, search | Not adopted. Decided by Robert: it would become a dependency. Not forked either: the agent's call, because of the licence and its size. Its ideas are used. |
 | cass-memory | Turns sessions into rules for coding agents, scored by feedback that fades | Little. Its unit is a rule for an agent. It has no ideas, no links between projects, no person judging, no picture. | Do not adopt. Borrow four ideas. |
 
 What neither does is the part Robert called the interesting problem: connections between ideas across projects, judged by the person.
