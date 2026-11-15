@@ -5,7 +5,7 @@ sources: [raw/sessions/2026-11-15-first-brainstorm.md]
 ---
 # Mo as the test case
 
-Mo is Robert's programming language project (`robertguss/mo`, public). He named it as the example this tool should handle: large, fast-moving, and already pivoted and restarted.
+Mo is Robert's programming language project (`robertguss/mo`, public). They named it as the example this tool should handle: large, fast-moving, and already pivoted and restarted.
 
 ## Why it is a good test
 

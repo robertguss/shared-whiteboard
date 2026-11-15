@@ -5,11 +5,11 @@ sources: [raw/sessions/2026-11-15-first-brainstorm.md]
 ---
 # Requirements so far
 
-What Robert has asked for. Each line traces to his words in the first session record. Nothing here is a design.
+What Robert has asked for. Each line traces to their words in the first session record. Nothing here is a design.
 
 ## Wanted
 
-| # | Requirement | His words |
+| # | Requirement | Their words |
 | --- | --- | --- |
 | 1 | See ideas visually, not as files of text | "too many files and too much text and its hard for me to see the connections" |
 | 2 | A free, infinite board where notes move anywhere | "an infinite whiteboard where notes and things can be moved around freely" |
@@ -30,4 +30,4 @@ What Robert has asked for. Each line traces to his words in the first session re
 
 ## Not yet known
 
-Whether it is one HTML file or an app. Robert raised this in his opening request and it is still open. See [open questions](open-questions.md).
+Whether it is one HTML file or an app. Robert raised this in their opening request and it is still open. See [open questions](open-questions.md).

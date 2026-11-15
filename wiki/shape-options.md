@@ -1,15 +1,15 @@
 ---
 type: comparison
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md]
 ---
 # Shape options: how status and history show up
 
-**Standing:** open. Robert has the prototype and has not chosen. The agent recommends B (proposed).
+**Standing:** decided. Robert chose B, board plus views, after trying prototype 001. They gave no reasons, so which parts of B matter most is unverified.
 
 Prototype: [three-shapes.html](../prototypes/001-status-and-history/three-shapes.html).
 
-| | A, free board only | B, board plus views | C, auto mind map |
+| | A, free board only | **B, board plus views (chosen)** | C, auto mind map |
 | --- | --- | --- | --- |
 | Main surface | Free board | Free board | Computed tree |
 | Place notes by hand | Yes | Yes | No |
@@ -20,11 +20,13 @@ Prototype: [three-shapes.html](../prototypes/001-status-and-history/three-shapes
 | When the agent adds notes | They wait in a tray until placed | They wait in a tray on the board; the other views already show them | The tree makes room |
 | What the board's layout is spent on | Time, so little is left for meaning | Meaning, because time lives in another view | Hierarchy |
 
-## Why the agent recommends B
+## What B commits us to
 
-It is the only option where the board stays free for the person's own arrangement and the questions "what is done, what is next, how did we get here" are answered without anyone laying them out by hand.
+- Every note carries at least a status and a date, or the timeline and status views are empty.
+- The agent has to fill those fields, since the person will not do it by hand.
+- Three views to build and keep in step, not one.
 
-## What the prototype cannot tell us
+## What the prototype did not tell us
 
 - How any of this feels on a phone or tablet. It was checked at desktop width only.
 - How it holds up at Mo's real size. The prototype has about 30 notes.

@@ -7,14 +7,14 @@ Every page in the wiki. Read [overview](overview.md) first.
 | Page | Summary | Updated |
 | --- | --- | --- |
 | [overview](overview.md) | What this project is, what is decided, what is proposed, what is next | 2026-11-15 |
-| [requirements](requirements.md) | What Robert has asked for, traced to his words | 2026-11-15 |
-| [open questions](open-questions.md) | Ten undecided questions with the agent's lean on each | 2026-11-15 |
+| [requirements](requirements.md) | What Robert has asked for, traced to their words | 2026-11-15 |
+| [open questions](open-questions.md) | Nine undecided questions with the agent's lean on each | 2026-11-15 |
 
 ## Comparisons
 
 | Page | Summary | Updated |
 | --- | --- | --- |
-| [shape options](shape-options.md) | Free board, board plus views, or auto mind map; prototype 001 | 2026-11-15 |
+| [shape options](shape-options.md) | Free board, board plus views, or auto mind map; B, board plus views, was chosen | 2026-11-15 |
 | [existing tools](existing-tools.md) | Seven tools looked at, none adopted, three ideas borrowed | 2026-11-15 |
 
 ## Entities
@@ -28,6 +28,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | File | What |
 | --- | --- |
 | [first brainstorm](../raw/sessions/2026-11-15-first-brainstorm.md) | Session record, 15 November 2026 |
+| [shape decision](../raw/sessions/2026-11-15-shape-decision.md) | Robert chose shape B, 15 November 2026 |
 | [Karpathy, LLM Wiki](../raw/sources/2026-11-15-karpathy-llm-wiki.md) | The pattern this repo follows |
 | [tool scan](../raw/sources/2026-11-15-tool-scan.md) | canvai, Maproom, Vync, Nimbalyst, Arango |
 

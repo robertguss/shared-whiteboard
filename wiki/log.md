@@ -17,3 +17,7 @@ Set this repo up as an LLM wiki. Wrote `AGENTS.md` as the schema. Departure from
 ## [2026-11-15] session | Wiki seeded
 
 Created `overview.md`, `requirements.md`, `shape-options.md`, `existing-tools.md`, `mo-test-case.md`, `open-questions.md` and `index.md`.
+
+## [2026-11-15] decision | Shape B, board plus views
+
+Robert chose B after trying prototype 001. Record: `raw/sessions/2026-11-15-shape-decision.md`. Updated `shape-options.md`, `overview.md`, `open-questions.md` and `index.md`. Wiki pages now refer to Robert as "they"; pronouns were never stated.
