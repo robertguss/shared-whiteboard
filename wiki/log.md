@@ -33,3 +33,7 @@ Three stubs in `raw/sources/`. Wrote `memory-model.md`. Added TheBrain and a sec
 ## [2026-11-15] decision | Structure plus memory behaviour; engine question opened
 
 Robert chose linked structure plus memory behaviour, confirmed shape B after opening the prototype, and asked for research into database engines and into computer science and biology papers before deciding whether to design an engine. Record: `raw/sessions/2026-11-15-engine-research-kickoff.md`. The agent's earlier "not a new storage engine" is withdrawn as a conclusion and kept as one side of an open question.
+
+## [2026-11-15] ingest | Four research passes on engines, memory, biology and ideas
+
+Four subagents each wrote one stub in `raw/sources/2026-11-15-research-*.md`. Wrote `engine-research.md`. Contradiction found and fixed before commit: two passes disagreed on what hirn is built on; its README says Lance. Most papers were read at abstract level only.

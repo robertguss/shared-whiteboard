@@ -16,6 +16,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | Page | Summary | Updated |
 | --- | --- | --- |
 | [shape options](shape-options.md) | Free board, board plus views, or auto mind map; B, board plus views, was chosen | 2026-11-15 |
+| [engine research](engine-research.md) | What is taken, what is open, and where a new engine would be new | 2026-11-15 |
 | [existing tools](existing-tools.md) | Eight tools looked at, none adopted, five ideas borrowed | 2026-11-15 |
 
 ## Entities
@@ -37,6 +38,10 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |
+| [research: database engines](../raw/sources/2026-11-15-research-db-engines.md) | Engine families and where they strain under a memory workload |
+| [research: computational memory](../raw/sources/2026-11-15-research-computational-memory.md) | Cognitive architectures, associative memory, agent memory systems |
+| [research: biology of memory](../raw/sources/2026-11-15-research-biology-of-memory.md) | Engrams, plasticity, consolidation, forgetting, and how settled each is |
+| [research: idea generation](../raw/sources/2026-11-15-research-idea-generation.md) | How ideas form, brainstorming with AI, lessons from earlier tools |
 
 ## Prototypes
 

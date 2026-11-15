@@ -44,7 +44,7 @@ Open, and research decides it. The agent first advised against a new storage eng
 
 ## What would be new
 
-Every brain-inspired memory system in the scan serves the agent alone. None is also a surface the person looks at and rearranges. A memory the person and the agent share and both shape is the gap.
+Every brain-inspired memory system found serves the agent alone, and most of the mechanisms in the table above are already built for agents. A memory the person and the agent share and both shape is the gap. The research pass lists ten ideas found nowhere: see [engine research](engine-research.md).
 
 ## How we would know it works
 

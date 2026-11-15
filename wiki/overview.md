@@ -25,7 +25,8 @@ Brainstorming with AI produces markdown faster than a person can hold it in thei
 | The board is a plain file in the project's repo. | Proposed |
 | The data comes first; the board and other layouts are ways of displaying it. | Decided by Robert |
 | The data is modelled on human memory: linked structure plus memory behaviour. | Decided by Robert. See [memory model](memory-model.md). |
-| Whether to design a new database engine for it. | Open. Robert wants to consider it; research comes first. |
+| Whether to design a new database engine for it. | Open. Robert wants to consider it. First research pass: [engine research](engine-research.md). |
+| Brain-like memory for an agent alone is crowded; memory for a person and an agent thinking together is open. | Proposed, from one research pass |
 | The project is meant to be ambitious, and learning and enjoyment are goals in themselves. | Stated by Robert |
 | No existing tool is adopted; five ideas are borrowed. | Proposed |
 | No Arango or other server database. | Proposed |
@@ -34,7 +35,7 @@ Details: [requirements](requirements.md), [shape options](shape-options.md), [me
 
 ## Next
 
-Settle how literally "like the brain" is meant, then work through the rest of the [open questions](open-questions.md), then write a requirements plan.
+Robert reacts to the [engine research](engine-research.md): is "memory for a person and an agent thinking together" the target? Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
 
 ## An idea to hold
 
