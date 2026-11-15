@@ -1,11 +1,13 @@
 ---
 type: entity
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-external-brain.md]
 ---
 # Mo as the test case
 
 Mo is Robert's programming language project (`robertguss/mo`, public). They named it as the example this tool should handle: large, fast-moving, and already pivoted and restarted.
+
+**Standing:** Mo is one part of the brain, not the frame for it. Robert widened the scope to all their projects and ideas and does not want the design fitted to one project (`raw/sessions/2026-11-15-external-brain.md`). Mo remains the first large body of material to load.
 
 ## Why it is a good test
 

@@ -45,3 +45,7 @@ Robert keeps the storage core in the research and does not accept "helps produce
 ## [2026-11-15] ingest | Research pass on the storage core
 
 One subagent tested Robert's hypothesis that storage-core design shapes memory. Stub: `raw/sources/2026-11-15-research-storage-core.md`. Added a section to `engine-research.md`. Contradiction flagged: the first pass treated the storage core as irrelevant to the memory layer; the second finds three choices that change what the layer can offer.
+
+## [2026-11-15] decision | An external brain across all projects
+
+Robert widened the scope from one project to all their projects and ideas: a database that acts as an external form of their brain, in which the agent makes or proposes connections. Not to be framed as a second brain. Record: `raw/sessions/2026-11-15-external-brain.md`. Rewrote the top of `overview.md` and the README. Closed the "one brain or one per project" question and added three: what a valuable connection is, what makes this deeper than a second brain, and where the content comes from.

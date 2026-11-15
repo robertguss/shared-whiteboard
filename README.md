@@ -1,8 +1,8 @@
 # Shared whiteboard
 
-A visual work surface that a person and AI agents both read and edit: part whiteboard, part roadmap, part project history.
+A database that acts as an external form of one person's brain, across all their projects and ideas, which AI agents can read, understand and add to. Visual views such as a whiteboard and a timeline show the same data.
 
-**Status:** exploring. Nothing is built yet beyond one throwaway prototype. `shared-whiteboard` is a working name.
+**Status:** exploring. Nothing is built yet beyond one throwaway prototype. `shared-whiteboard` is a working name from the project's first hours, when it was a whiteboard; it no longer describes it.
 
 ## Where to look
 
