@@ -1,7 +1,7 @@
 ---
 type: overview
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
@@ -27,6 +27,8 @@ Brainstorming with AI produces markdown faster than a person can hold it in thei
 | The data is modelled on human memory: linked structure plus memory behaviour. | Decided by Robert. See [memory model](memory-model.md). |
 | Whether to design a new database engine for it. | Open. Robert wants to consider it. First research pass: [engine research](engine-research.md). |
 | Brain-like memory for an agent alone is crowded; memory for a person and an agent thinking together is open. | Proposed, from one research pass |
+| The storage core is part of the research, because its design may influence the memory and association layer. | Decided by Robert |
+| The north star. | Not known yet. "Helps produce new ideas" is not accepted as the measure. See [open questions](open-questions.md). |
 | The project is meant to be ambitious, and learning and enjoyment are goals in themselves. | Stated by Robert |
 | No existing tool is adopted; five ideas are borrowed. | Proposed |
 | No Arango or other server database. | Proposed |
@@ -35,7 +37,7 @@ Details: [requirements](requirements.md), [shape options](shape-options.md), [me
 
 ## Next
 
-Robert reacts to the [engine research](engine-research.md): is "memory for a person and an agent thinking together" the target? Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
+Find the north star. Research how the storage core could shape the memory layer. Then read the key papers in full, work through the [open questions](open-questions.md), and write a requirements plan.
 
 ## An idea to hold
 

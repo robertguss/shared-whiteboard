@@ -35,6 +35,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [tool scan](../raw/sources/2026-11-15-tool-scan.md) | canvai, Maproom, Vync, Nimbalyst, Arango |
 | [data-first reframe](../raw/sessions/2026-11-15-data-first-reframe.md) | Robert proposes a database modelled on the brain, 15 November 2026 |
 | [engine research kickoff](../raw/sessions/2026-11-15-engine-research-kickoff.md) | Robert chooses memory behaviour and asks for engine research, 15 November 2026 |
+| [north star open](../raw/sessions/2026-11-15-north-star-open.md) | Storage core stays in scope; the north star is not yet known, 15 November 2026 |
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |

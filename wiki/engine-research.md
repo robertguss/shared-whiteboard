@@ -5,7 +5,7 @@ sources: [raw/sources/2026-11-15-research-db-engines.md, raw/sources/2026-11-15-
 ---
 # Engine research: what is taken and what is open
 
-**Conclusion (proposed):** brain-like memory for an AI agent is crowded. Memory for a person and an agent thinking together, judged by whether it helps produce new ideas, is open. A new engine has a real reason to exist as a layer of operations and meaning. Nothing found calls for a new way of storing bytes on disk.
+**Conclusion (proposed):** brain-like memory for an AI agent is crowded. Memory for a person and an agent thinking together is open. What it should be judged by is not settled: Robert does not accept "helps produce new ideas" as the measure. A new engine has a real reason to exist as a layer of operations and meaning. Nothing found calls for a new way of storing bytes on disk.
 
 **How far to trust this:** one research pass on 15 November 2026. Four lanes, about 70 searches, most papers read at abstract level. "Open" means "not found", which is weaker than "does not exist".
 
@@ -69,7 +69,7 @@ sources: [raw/sources/2026-11-15-research-db-engines.md, raw/sources/2026-11-15-
 | --- | --- | --- |
 | Operations and meaning: the open ideas above | The project's value is here | Yes, as far as this pass found |
 | Engine mechanics: decay, events, activation, live views | Needed to make the operations fast and exact | Partly. Each exists somewhere; the combination does not. |
-| Storage core: pages, logs, trees | Learning and enjoyment | No |
+| Storage core: pages, logs, trees | Learning and enjoyment. Robert adds: its design may influence the memory and association layer, so it stays in the research. | Not in the first pass. A second pass looks at this directly. |
 
 ## Biggest doubts
 

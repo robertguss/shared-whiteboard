@@ -37,3 +37,7 @@ Robert chose linked structure plus memory behaviour, confirmed shape B after ope
 ## [2026-11-15] ingest | Four research passes on engines, memory, biology and ideas
 
 Four subagents each wrote one stub in `raw/sources/2026-11-15-research-*.md`. Wrote `engine-research.md`. Contradiction found and fixed before commit: two passes disagreed on what hirn is built on; its README says Lance. Most papers were read at abstract level only.
+
+## [2026-11-15] decision | Storage core in scope; north star open
+
+Robert keeps the storage core in the research and does not accept "helps produce new ideas" as the measure of success. The north star is now the first open question. Wiki commits are pushed as they are made from here on. Record: `raw/sessions/2026-11-15-north-star-open.md`.
