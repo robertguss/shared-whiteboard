@@ -43,6 +43,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [research: computational memory](../raw/sources/2026-11-15-research-computational-memory.md) | Cognitive architectures, associative memory, agent memory systems |
 | [research: biology of memory](../raw/sources/2026-11-15-research-biology-of-memory.md) | Engrams, plasticity, consolidation, forgetting, and how settled each is |
 | [research: idea generation](../raw/sources/2026-11-15-research-idea-generation.md) | How ideas form, brainstorming with AI, lessons from earlier tools |
+| [research: storage core](../raw/sources/2026-11-15-research-storage-core.md) | Which storage-core choices shape memory and which are only metaphor |
 
 ## Prototypes
 

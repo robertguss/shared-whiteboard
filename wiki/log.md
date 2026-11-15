@@ -41,3 +41,7 @@ Four subagents each wrote one stub in `raw/sources/2026-11-15-research-*.md`. Wr
 ## [2026-11-15] decision | Storage core in scope; north star open
 
 Robert keeps the storage core in the research and does not accept "helps produce new ideas" as the measure of success. The north star is now the first open question. Wiki commits are pushed as they are made from here on. Record: `raw/sessions/2026-11-15-north-star-open.md`.
+
+## [2026-11-15] ingest | Research pass on the storage core
+
+One subagent tested Robert's hypothesis that storage-core design shapes memory. Stub: `raw/sources/2026-11-15-research-storage-core.md`. Added a section to `engine-research.md`. Contradiction flagged: the first pass treated the storage core as irrelevant to the memory layer; the second finds three choices that change what the layer can offer.

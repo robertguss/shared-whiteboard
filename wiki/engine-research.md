@@ -1,13 +1,13 @@
 ---
 type: comparison
 updated: 2026-11-15
-sources: [raw/sources/2026-11-15-research-db-engines.md, raw/sources/2026-11-15-research-computational-memory.md, raw/sources/2026-11-15-research-biology-of-memory.md, raw/sources/2026-11-15-research-idea-generation.md, raw/sessions/2026-11-15-engine-research-kickoff.md]
+sources: [raw/sources/2026-11-15-research-db-engines.md, raw/sources/2026-11-15-research-computational-memory.md, raw/sources/2026-11-15-research-biology-of-memory.md, raw/sources/2026-11-15-research-idea-generation.md, raw/sources/2026-11-15-research-storage-core.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md]
 ---
 # Engine research: what is taken and what is open
 
 **Conclusion (proposed):** brain-like memory for an AI agent is crowded. Memory for a person and an agent thinking together is open. What it should be judged by is not settled: Robert does not accept "helps produce new ideas" as the measure. A new engine has a real reason to exist as a layer of operations and meaning. Nothing found calls for a new way of storing bytes on disk.
 
-**How far to trust this:** one research pass on 15 November 2026. Four lanes, about 70 searches, most papers read at abstract level. "Open" means "not found", which is weaker than "does not exist".
+**How far to trust this:** two research passes on 15 November 2026. Five lanes, about 90 searches, most papers read at abstract level. "Open" means "not found", which is weaker than "does not exist".
 
 ## The four lanes in one line each
 
@@ -69,7 +69,27 @@ sources: [raw/sources/2026-11-15-research-db-engines.md, raw/sources/2026-11-15-
 | --- | --- | --- |
 | Operations and meaning: the open ideas above | The project's value is here | Yes, as far as this pass found |
 | Engine mechanics: decay, events, activation, live views | Needed to make the operations fast and exact | Partly. Each exists somewhere; the combination does not. |
-| Storage core: pages, logs, trees | Learning and enjoyment. Robert adds: its design may influence the memory and association layer, so it stays in the research. | Not in the first pass. A second pass looks at this directly. |
+| Storage core: what it keeps, and how versions relate | It decides whether replay, branching and reviewable consolidation are cheap. Robert's hypothesis, partly confirmed by the second pass below. | The choices exist separately (Dolt, Datomic, RocksDB). Not found combined for memory. |
+| Storage core: pages, logs, trees written from scratch | Learning and enjoyment | No |
+
+## Second pass: does the storage core shape memory?
+
+Robert's hypothesis: the design of the storage core may influence the memory and association layer. Source: [research: storage core](../raw/sources/2026-11-15-research-storage-core.md).
+
+**Finding (proposed): partly true.** The storage core shapes memory through what it promises to keep and how versions relate. Where the bytes sit does not, at one person's scale, because everything fits in memory.
+
+| Storage-core choice | Verdict | Why |
+| --- | --- | --- |
+| Never overwrite; keep versions that share their unchanged parts | Design lever | Branching, comparing and "as of last week" become cheap. Consolidation can be proposed on a branch and reviewed. Changes what the layer above can offer. |
+| Store each use as an event and compute strength from the events | Design lever | The rule for fading can be changed later and history recomputed. Several agents can strengthen the same link at once without losing updates. A stored number allows neither. |
+| A tested policy for what gets put in front of the agent | Design lever | Cache eviction policies are forty years of worked-out theory about what to keep in reach. Anderson and Schooler (1991) found human forgetting tracks how likely an item is to be needed, which is what those policies estimate. |
+| Background merge passes as the home of consolidation | Learning value only | They see one record at a time, run when the engine chooses and cannot be reviewed. Borrow the idea of a background pass, not the mechanism. |
+| Laying out related records next to each other | Learning value only | Speed only, and only on data larger than this. |
+| Reads that reorganise the structure | Learning value only | They reorganise the index, not the memory. |
+| "Stored together means associated" | Metaphor at this scale | The association is the link, not the address. |
+| Memristors, neuromorphic chips, DNA storage | Metaphor for now | Laboratory results. Nothing runs on an ordinary laptop. |
+
+**What this changes:** the storage core is not irrelevant, as the first pass implied. Two of the open ideas above, replayable salience and reviewable consolidation, depend directly on a core that keeps events and versions. **What it does not change:** all three levers can be built on an existing embedded store, so the case for writing pages and trees from scratch still rests on learning and enjoyment.
 
 ## Biggest doubts
 
