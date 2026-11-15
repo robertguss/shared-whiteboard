@@ -61,3 +61,7 @@ Robert set aside why earlier attempts stopped and asked why the idea recurs. An 
 ## [2026-11-15] decision | Problem statement accepted for now
 
 Robert accepted the statement tentatively, asked what "engines and views are experiments" means, and raised the size of an append-only record. Added two sections to `the-problem.md`. Measured: 2.2 GB of agent session files in 18 days against 0.4 MB of Robert's own words, so the record holds the thinking and points to the session files. Record: `raw/sessions/2026-11-15-record-and-experiments.md`.
+
+## [2026-11-15] session | Agent transcripts as the record
+
+Robert proposed using the agent session files from both machines as the append-only record, copied to one bucket, and starting on the engine. The agent agreed with three changes: the copy never deletes, judgements get their own log, and the first engine stage reads the tools' formats. Found that the tool deletes session files after 30 days by default. Record: `raw/sessions/2026-11-15-transcripts-as-the-record.md`.

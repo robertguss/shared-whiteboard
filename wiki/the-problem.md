@@ -1,7 +1,7 @@
 ---
 type: concept
 updated: 2026-11-15
-sources: [raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-record-and-experiments.md, raw/sessions/2026-11-15-hand-run-test.md, raw/sessions/2026-11-15-external-brain.md]
+sources: [raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-record-and-experiments.md, raw/sessions/2026-11-15-hand-run-test.md, raw/sessions/2026-11-15-external-brain.md]
 ---
 # The problem, and why it keeps coming back
 
@@ -74,6 +74,22 @@ Robert raised this. Measured on one machine over 18 days, 29 October to 15 Novem
 So the concern is right if the record holds everything, and does not apply if it holds the thinking. The record holds the thinking: what was said, decided, tried and connected, each item pointing to the session or file it came from. The full session files stay where they already are.
 
 The real limit is reading, not disk space. No agent can read the whole record at the start of each session. Finding the right few items is the engine's job, and it is the reason the engine is worth designing.
+
+## Where the record comes from
+
+Proposed by Robert: the agent session files are already append-only and already exist in large numbers, on two machines. Copy them to one bucket and start on the engine. The agent agrees, with three changes.
+
+| Part | What it holds | State |
+| --- | --- | --- |
+| Source | The agent session files, as the tools wrote them | Exists. To be copied from both machines to one bucket. |
+| Judgements | What Robert confirms, rejects or corrects, and the connections Robert accepts | Does not exist yet. Small. Kept as carefully as the source. |
+| Engine | Everything built by reading the first two | The problem to solve |
+
+1. **The copy must never delete.** The tool that writes the session files removes them after 30 days by default. The bucket keeps a file after the machine has dropped it.
+2. **Judgements need their own log.** The session files hold what was said. They do not hold what Robert later decides is true or connected. If judgements live only inside an engine, they are lost when the engine is replaced, which is the old restart again.
+3. **The session files are someone else's format.** Each tool writes its own, and each can change. The first stage of the engine reads these formats and turns them into the project's own units.
+
+Session files also contain secrets and other people's material. The bucket is private.
 
 ## A tension to hold
 
