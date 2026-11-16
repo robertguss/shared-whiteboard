@@ -11,6 +11,10 @@ pub struct Config {
     pub t3_database: PathBuf,
     pub record_folder: PathBuf,
     pub database: PathBuf,
+    #[serde(default)]
+    pub project_parents: Vec<String>,
+    #[serde(default)]
+    pub temporary_prefixes: Vec<String>,
 }
 
 impl Config {

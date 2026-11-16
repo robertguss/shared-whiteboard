@@ -45,7 +45,14 @@ impl Setup {
     }
 
     fn read(&mut self) -> Report {
-        read(&mut self.db, &self.root.join("record"), &[("claude", tiny)]).unwrap()
+        read(
+            &mut self.db,
+            &self.root.join("record"),
+            &[("claude", tiny)],
+            &[],
+            &[],
+        )
+        .unwrap()
     }
 
     fn one(&self, sql: &str) -> String {

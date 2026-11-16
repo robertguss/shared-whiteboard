@@ -5,25 +5,34 @@ use std::path::Path;
 use std::process::Command;
 
 pub fn copy(config: &Config, stamp: &str) -> Result<()> {
-    let remote = config.remote.trim_end_matches('/');
-    let up = |local: &Path, path: &str| {
-        let backup = format!("{remote}/old/{stamp}/{path}");
-        let flags = ["--backup-dir", &backup, "--local-no-check-updated"];
-        rclone(local, format!("{remote}/{path}"), &flags)
-    };
     let machine = &config.machine;
     for (tool, folder) in &config.sources {
-        up(folder, &format!("sources/{machine}/{tool}"))?;
+        up(config, stamp, folder, &format!("sources/{machine}/{tool}"))?;
     }
     let t3 = format!("sources/{machine}/t3");
-    let extracted = t3::extract(&config.t3_database, &config.record_folder.join(&t3));
-    for path in [t3, format!("events/{machine}")] {
-        let local = config.record_folder.join(&path);
-        if local.exists() {
-            up(&local, &path)?;
-        }
+    let local = config.record_folder.join(&t3);
+    let extracted = t3::extract(&config.t3_database, &local);
+    if local.exists() {
+        up(config, stamp, &local, &t3)?;
     }
+    copy_events(config, stamp)?;
     extracted
+}
+
+pub fn copy_events(config: &Config, stamp: &str) -> Result<()> {
+    let path = format!("events/{}", config.machine);
+    let local = config.record_folder.join(&path);
+    if local.exists() {
+        up(config, stamp, &local, &path)?;
+    }
+    Ok(())
+}
+
+fn up(config: &Config, stamp: &str, local: &Path, path: &str) -> Result<()> {
+    let remote = config.remote.trim_end_matches('/');
+    let backup = format!("{remote}/old/{stamp}/{path}");
+    let flags = ["--backup-dir", &backup, "--local-no-check-updated"];
+    rclone(local, format!("{remote}/{path}"), &flags)
 }
 
 pub fn pull(config: &Config) -> Result<()> {
@@ -45,9 +54,17 @@ pub fn pull(config: &Config) -> Result<()> {
 }
 
 pub fn stamp_now() -> Result<String> {
+    now("%Y-%m-%dT%H%M%SZ")
+}
+
+pub fn time_now() -> Result<String> {
+    now("%Y-%m-%dT%H:%M:%SZ")
+}
+
+fn now(format: &str) -> Result<String> {
     Ok(rusqlite::Connection::open_in_memory()?.query_row(
-        "SELECT strftime('%Y-%m-%dT%H%M%SZ', 'now')",
-        [],
+        "SELECT strftime(?1, 'now')",
+        [format],
         |row| row.get(0),
     )?)
 }

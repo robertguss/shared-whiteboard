@@ -1,6 +1,7 @@
 pub mod claude;
 pub mod codex;
 pub mod config;
+pub mod context;
 pub mod copy;
 pub mod events;
 pub mod ingest;

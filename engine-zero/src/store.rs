@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS files (path TEXT PRIMARY KEY, position INTEGER NOT NU
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, tool TEXT NOT NULL, session_id TEXT NOT NULL,
   author TEXT NOT NULL, time TEXT, cwd TEXT, repo_url TEXT, text TEXT NOT NULL, text_hash TEXT NOT NULL,
-  other_hash TEXT, file TEXT NOT NULL, line INTEGER NOT NULL, prompt INTEGER NOT NULL, fallback_author TEXT NOT NULL);
+  other_hash TEXT, file TEXT NOT NULL, line INTEGER NOT NULL, prompt INTEGER NOT NULL, fallback_author TEXT NOT NULL,
+  context TEXT);
 CREATE INDEX IF NOT EXISTS items_file ON items (file);
 CREATE INDEX IF NOT EXISTS items_prompt ON items (session_id, text_hash) WHERE prompt;
 CREATE VIRTUAL TABLE IF NOT EXISTS items_fts USING fts5 (text, content = 'items', content_rowid = 'id');

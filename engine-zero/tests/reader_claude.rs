@@ -39,7 +39,7 @@ impl Setup {
     }
 
     fn read(&mut self) -> Report {
-        read(&mut self.db, &self.root.join("record"), READERS).unwrap()
+        read(&mut self.db, &self.root.join("record"), READERS, &[], &[]).unwrap()
     }
 
     fn author(&self, uuid: &str) -> String {

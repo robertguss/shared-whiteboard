@@ -1,7 +1,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::store::{self, Item};
-use crate::{claude, codex, events};
+use crate::{claude, codex, context, events};
 use rusqlite::Connection;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -62,7 +62,11 @@ enum Handler {
 
 pub fn run(config: &Config) -> Result<()> {
     let mut db = store::open(&config.database)?;
-    print!("{}", read(&mut db, &config.record_folder, READERS)?);
+    let (parents, temporary) = (&config.project_parents, &config.temporary_prefixes);
+    print!(
+        "{}",
+        read(&mut db, &config.record_folder, READERS, parents, temporary)?
+    );
     Ok(())
 }
 
@@ -73,7 +77,13 @@ pub fn rebuild(config: &Config) -> Result<()> {
     }
 }
 
-pub fn read(db: &mut Connection, record: &Path, readers: &[(&str, Reader)]) -> Result<Report> {
+pub fn read(
+    db: &mut Connection,
+    record: &Path,
+    readers: &[(&str, Reader)],
+    parents: &[String],
+    temporary: &[String],
+) -> Result<Report> {
     let mut report = Report::default();
     let before = store::count_items(db)?;
     let mut paths = vec![];
@@ -83,6 +93,7 @@ pub fn read(db: &mut Connection, record: &Path, readers: &[(&str, Reader)]) -> R
         read_path(db, record, &path, readers, &mut report)?;
     }
     store::settle_authors(db)?;
+    context::settle(db, parents, temporary)?;
     report.added = store::count_items(db)? - before;
     Ok(report)
 }

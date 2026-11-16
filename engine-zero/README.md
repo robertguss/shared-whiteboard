@@ -30,7 +30,9 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
   },
   "t3_database": "/home/you/.t3/userdata/statev2.sqlite",
   "record_folder": "/home/you/.local/share/engine-zero/record",
-  "database": "/home/you/.local/share/engine-zero/engine.sqlite"
+  "database": "/home/you/.local/share/engine-zero/engine.sqlite",
+  "project_parents": ["/home/you/code", "/Users/you/Projects"],
+  "temporary_prefixes": ["/tmp", "/private/var/folders"]
 }
 ```
 
@@ -39,12 +41,14 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
 - `sources` maps a tool name to its session folder. List only the tools installed on that machine.
 - `t3_database` is skipped when the file does not exist.
 - `record_folder` and `database` must be outside this repository; the program refuses to run otherwise.
+- `project_parents` lists folders whose every direct child is a project, such as `~/code`. `temporary_prefixes` lists folders whose sessions are never a project. Both default to empty and should hold both machines' paths, since sessions from either machine are read on each; they are compared as path text, never looked up on disk.
 
 ## Commands
 
 - `engine-zero copy` copies each source folder to `sources/<machine>/<tool>/`, writes the T3 extract to `<record_folder>/sources/<machine>/t3/`, then copies the extract and `<record_folder>/events/<machine>/` to the bucket.
 - `engine-zero pull` copies `sources/` and `events/` from the bucket into the record folder, leaves `old/` out, and never replaces this machine's own event files; it only restores a missing one.
-- `engine-zero read` reads what is new in the record folder's `.jsonl` files into the database, which it creates on first use. Each file resumes where the last read stopped, a last line without a newline waits for a later read, and a file that became shorter is read again from the start. Secrets are masked in what is stored; the record files are never changed. At the end of every read, the author of each prompt is worked out again from the T3 extract. It prints how many items were added, how many broken lines were skipped, and, for each tool, how many records were stored and skipped by record type. The database can be deleted at any time; the next `read` builds it again.
+- `engine-zero read` reads what is new in the record folder's `.jsonl` files into the database, which it creates on first use. Each file resumes where the last read stopped, a last line without a newline waits for a later read, and a file that became shorter is read again from the start. Secrets are masked in what is stored; the record files are never changed. At the end of every read, the author of each prompt is worked out again from the T3 extract, and so is the context of every item. The first of these that applies gives the context: a correction from `context set`; a worktree path `…/.t3/worktrees/<repo>/…` or `…/<repo>/.claude/worktrees/…`; the longest project root holding the working directory (T3 Code's project roots except its scratch root and roots under a temporary prefix, plus each child of a project parent); the last segment of Codex's repository URL; the session itself (`session:<id>`) for any other working directory. An item with no working directory and no repository URL has no context. It prints how many items were added, how many broken lines were skipped, and, for each tool, how many records were stored and skipped by record type. The database can be deleted at any time; the next `read` builds it again.
+- `engine-zero context set <prefix> <name> --caller <who>` names the context of every item whose working directory is `<prefix>` or under it. The longest matching prefix wins, and a later correction for the same prefix replaces an earlier one. It records the correction as an event, works out contexts again, then copies `<record_folder>/events/<machine>/` to the bucket. If that copy fails it says so and exits with an error; the correction stays in the local event file and the database.
 - `engine-zero rebuild` deletes the database and runs `read`, which builds it again from the record folder's session files and event files under `events/<machine>/<YYYY-MM>.jsonl`.
 
 ## Daily schedule
