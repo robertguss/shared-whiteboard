@@ -1,7 +1,7 @@
 use crate::Result;
 use crate::config::Config;
 use crate::store::{self, Item};
-use crate::{claude, codex};
+use crate::{claude, codex, events};
 use rusqlite::Connection;
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -57,12 +57,20 @@ enum Handler {
     Session(Reader),
     T3Messages,
     T3Projects,
+    Events,
 }
 
 pub fn run(config: &Config) -> Result<()> {
     let mut db = store::open(&config.database)?;
     print!("{}", read(&mut db, &config.record_folder, READERS)?);
     Ok(())
+}
+
+pub fn rebuild(config: &Config) -> Result<()> {
+    match fs::remove_file(&config.database) {
+        Err(error) if error.kind() != std::io::ErrorKind::NotFound => Err(error.into()),
+        _ => run(config),
+    }
 }
 
 pub fn read(db: &mut Connection, record: &Path, readers: &[(&str, Reader)]) -> Result<Report> {
@@ -72,16 +80,27 @@ pub fn read(db: &mut Connection, record: &Path, readers: &[(&str, Reader)]) -> R
     walk(record, &mut paths)?;
     paths.sort();
     for path in paths {
-        let file = path.strip_prefix(record)?.to_string_lossy().into_owned();
-        if let Some((tree, handler)) = handler(&file, readers) {
-            let tx = db.transaction()?;
-            read_file(&tx, &path, &file, tree, handler, &mut report)?;
-            tx.commit()?;
-        }
+        read_path(db, record, &path, readers, &mut report)?;
     }
     store::settle_authors(db)?;
     report.added = store::count_items(db)? - before;
     Ok(report)
+}
+
+pub fn read_path(
+    db: &mut Connection,
+    record: &Path,
+    path: &Path,
+    readers: &[(&str, Reader)],
+    report: &mut Report,
+) -> Result<()> {
+    let file = path.strip_prefix(record)?.to_string_lossy().into_owned();
+    if let Some((tree, handler)) = handler(&file, readers) {
+        let tx = db.transaction()?;
+        read_file(&tx, path, &file, tree, handler, report)?;
+        tx.commit()?;
+    }
+    Ok(())
 }
 
 fn walk(dir: &Path, paths: &mut Vec<PathBuf>) -> Result<()> {
@@ -101,6 +120,7 @@ fn handler<'a>(file: &str, readers: &[(&'a str, Reader)]) -> Option<(&'a str, Ha
     match file.split('/').collect::<Vec<_>>().as_slice() {
         ["sources", _, "t3", "messages.jsonl"] => Some(("t3", Handler::T3Messages)),
         ["sources", _, "t3", "projects.jsonl"] => Some(("t3", Handler::T3Projects)),
+        ["events", _, _] => Some(("events", Handler::Events)),
         ["sources", _, tree, _, ..] => readers
             .iter()
             .find(|(name, _)| name == tree)
@@ -146,6 +166,15 @@ fn read_file(
         match handler {
             Handler::T3Messages => store::insert_t3_message(db, file, line, &value.to_string())?,
             Handler::T3Projects => store::insert_t3_project(db, file, line, &value.to_string())?,
+            Handler::Events if !events::KINDS.contains(&value["kind"].as_str().unwrap_or("")) => {
+                let kind = value["kind"].as_str().unwrap_or("untyped").to_string();
+                *counts.skipped.entry(kind).or_default() += 1;
+                continue;
+            }
+            Handler::Events => {
+                let connection = events::identity(&value["connection"]);
+                store::insert_event(db, file, line, &value.to_string(), connection.as_deref())?
+            }
             Handler::Session(reader) => match reader(&value, &place) {
                 Outcome::Items(items) => {
                     for item in &items {

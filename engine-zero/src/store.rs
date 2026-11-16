@@ -29,6 +29,14 @@ CREATE TABLE IF NOT EXISTS t3_messages (
 CREATE INDEX IF NOT EXISTS t3_messages_match ON t3_messages (session_id, text_hash);
 CREATE TABLE IF NOT EXISTS t3_projects (
   file TEXT NOT NULL, line INTEGER NOT NULL, project_id TEXT, workspace_root TEXT, PRIMARY KEY (file, line));
+CREATE TABLE IF NOT EXISTS events (
+  file TEXT NOT NULL, line INTEGER NOT NULL, kind TEXT NOT NULL, time TEXT, connection TEXT, body TEXT NOT NULL,
+  PRIMARY KEY (file, line));
+CREATE VIEW IF NOT EXISTS holding_judgements AS
+SELECT file, line, time, connection, body FROM (
+  SELECT *, row_number() OVER (PARTITION BY connection ORDER BY time DESC, file DESC, line DESC) AS rank
+  FROM events WHERE kind = 'judgement' AND connection IS NOT NULL)
+WHERE rank = 1;
 ";
 
 const INSERT_ITEM: &str = "
@@ -48,6 +56,9 @@ INSERT INTO t3_messages VALUES (?1, ?2, json_extract(?3, '$.messageId'),
 const INSERT_T3_PROJECT: &str = "
 INSERT INTO t3_projects VALUES (?1, ?2, json_extract(?3, '$.projectId'),
   json_extract(?3, '$.workspaceRoot'))";
+
+const INSERT_EVENT: &str = "
+INSERT INTO events VALUES (?1, ?2, json_extract(?3, '$.kind'), json_extract(?3, '$.time'), ?4, ?3)";
 
 const SETTLE_AUTHORS: &str = "
 UPDATE items SET author = coalesce((
@@ -144,7 +155,7 @@ pub fn save_position(db: &Connection, file: &str, position: u64, lines: i64) -> 
 }
 
 pub fn forget(db: &Connection, file: &str) -> Result<()> {
-    for table in ["items", "t3_messages", "t3_projects"] {
+    for table in ["items", "t3_messages", "t3_projects", "events"] {
         db.execute(&format!("DELETE FROM {table} WHERE file = ?1"), [file])?;
     }
     save_position(db, file, 0, 0)
@@ -186,6 +197,18 @@ pub fn insert_t3_message(db: &Connection, file: &str, line: i64, json: &str) -> 
 pub fn insert_t3_project(db: &Connection, file: &str, line: i64, json: &str) -> Result<()> {
     db.prepare_cached(INSERT_T3_PROJECT)?
         .execute(params![file, line, json])?;
+    Ok(())
+}
+
+pub fn insert_event(
+    db: &Connection,
+    file: &str,
+    line: i64,
+    json: &str,
+    connection: Option<&str>,
+) -> Result<()> {
+    db.prepare_cached(INSERT_EVENT)?
+        .execute(params![file, line, json, connection])?;
     Ok(())
 }
 

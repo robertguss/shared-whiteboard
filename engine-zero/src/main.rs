@@ -16,6 +16,7 @@ enum Command {
     Copy,
     Pull,
     Read,
+    Rebuild,
 }
 
 fn main() -> ExitCode {
@@ -28,6 +29,7 @@ fn main() -> ExitCode {
         Command::Copy => copy::stamp_now().and_then(|stamp| copy::copy(&config, &stamp)),
         Command::Pull => copy::pull(&config),
         Command::Read => ingest::run(&config),
+        Command::Rebuild => ingest::rebuild(&config),
     });
     match result {
         Ok(()) => ExitCode::SUCCESS,

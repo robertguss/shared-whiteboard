@@ -2,6 +2,7 @@ pub mod claude;
 pub mod codex;
 pub mod config;
 pub mod copy;
+pub mod events;
 pub mod ingest;
 pub mod mask;
 pub mod store;
