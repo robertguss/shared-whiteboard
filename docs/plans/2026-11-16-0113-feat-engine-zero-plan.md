@@ -6,6 +6,7 @@ topic: engine-zero
 artifact_contract: ce-unified-plan/v1
 product_contract_source: ce-brainstorm
 execution: code
+deepened: 2026-11-16
 ---
 # Engine Zero - Plan
 
@@ -14,9 +15,9 @@ execution: code
 - **Objective:** Connections between Robert's projects, which today exist only in Robert's head, are proposed by an agent from Robert's own agent sessions, judged by Robert, and kept. Nothing collected or judged is lost when the engine under it is replaced.
 - **Means:** A throwaway first engine, written in Rust on SQLite, that reads agent session files from both of Robert's machines (KTD1).
 - **Product authority:** Robert. The agent proposes; Robert decides.
-- **Execution profile:** Ten units built in order, committed to `main` and pushed as each is finished, with no pull requests. This is the repository's practice, set by Robert on 15 November 2026.
+- **Execution profile:** Eleven units built in the order of the unit table, committed to `main` and pushed as each is finished, with no pull requests. This is the repository's practice, set by Robert on 15 November 2026.
 - **Stop conditions:** Stop and ask Robert before any command that could delete or overwrite bucket content other than as KTD2 describes, before session text would go anywhere but the bucket, and when a step needs Robert.
-- **Who finishes:** The agent builds and proves U1 to U8 and U10. Robert creates the bucket, sets up the second machine, and judges in U9.
+- **Who finishes:** The agent builds and proves U1 to U8, U10 and U11. Robert creates the bucket, sets up the second machine, and judges in U9.
 - **Open blockers:** None. The first real run of U1 waits on the bucket and its credentials.
 
 ---
@@ -253,39 +254,39 @@ Deferred to implementation:
 Product Contract preservation: changed R5, R10, R11 and R16, and added AE11.
 R5 gains the author "unknown", because research showed some prompts cannot be attributed.
 R10, R11 and R16 now speak of contexts, because Robert decided on 16 November 2026 that a session with no repository counts on its own.
+KTD4 adds a small T3 Code extract, with no message text, to what is copied. R1 is unchanged: the extract is evidence for R5, not a source of items.
 
 ### Key Technical Decisions
 
 - KTD1. **One Rust command-line program beside rclone.** It has no async runtime and no model client. Libraries: `rusqlite` with its bundled SQLite, which has full-text search switched on, `serde_json`, `clap`, `regex`, `sha2` and `tiny_http`. Governs R3, R4.
-- KTD2. **The copy is `rclone copy` with a dated backup folder, called only by the program.** Before rclone overwrites a bucket file it moves the old version into `old/<time>/`, so grown files and rewritten files are both kept without the program comparing content. The program never calls `rclone sync` and never passes a delete flag. Governs R1, R2.
-- KTD3. **The engine reads a local record folder that mirrors the bucket.** The engine machine pulls `sources/` and `events/` from the bucket and reads only that folder, so a rebuild uses exactly what the bucket holds. A rebuild reads current versions only, not `old/`. `pull` never replaces one of this machine's own event files; it only restores a missing one. Governs R3. Layout is under Output Structure.
+- KTD2. **The copy is `rclone copy` with a backup folder, called only by the program.** Before rclone overwrites a bucket file it moves the old version into `old/<UTC time to the second>/`, under the same path the file had, so grown files and rewritten files are both kept without the program comparing content. Each run has its own backup folder, because rclone overwrites a file already at the same backup path. Session files grow while they are copied, so the program passes `--local-no-check-updated`: rclone then sends the size it first saw, and KTD7 leaves a cut last line for a later read. The program never calls `rclone sync` and never passes a delete flag. Governs R1, R2.
+- KTD3. **The engine reads a local record folder that mirrors the bucket.** The engine machine pulls `sources/` and `events/` from the bucket and reads only that folder, so a rebuild reads the same current files the bucket holds, and never `old/`. `pull` never replaces one of this machine's own event files; it only restores a missing one. Governs R3. Layout is under Output Structure.
 - KTD4. **A small extract of T3 Code's database is copied with the session files.** Neither tool's session file shows whether a person or an agent sent a prompt through T3 Code; T3 Code's `orchestration_v2_projection_messages` table does, in `createdBy`. Each machine appends one row per user-role T3 message to `sources/<machine>/t3/messages.jsonl`: message id, thread id, the provider's session id, `createdBy`, `creationSource`, time, and the SHA-256 of the trimmed text. A second file lists T3 Code's project roots. The extract holds no message text. Governs R5, R16.
-- KTD5. **A message is the person's only on positive evidence.** The evidence is a T3 row with `createdBy: user` whose text hash matches within the linked session, or a terminal session record marked human. Everything else is the agent, another agent, a tool, or unknown. The ordered checks are in the tables under High-Level Technical Design. The hash is taken from the raw trimmed text, before masking. When the T3 rows for one hash in a session disagree on `createdBy`, the record is unknown. Unknown prompts in T3-linked sessions are tried again on every read, because a T3 row can arrive after the prompt was read. Governs R5.
+- KTD5. **A message is the person's only on positive evidence.** The evidence is a T3 row with `createdBy: user` whose text hash matches within the linked session, or, with no T3 row, a terminal record: Claude Code's human markers or Codex's `codex-tui` originator. Everything else is the agent, another agent, a tool, or unknown. The ordered checks are in the tables under High-Level Technical Design. The hash is taken from the raw trimmed text, before masking, and is stored with the item. When the T3 rows for one hash in a session disagree on `createdBy`, the record is unknown. The author of every prompt is worked out again at the end of each read, from the T3 rows present then, because a T3 row can arrive after its prompt. A database built step by step then equals a rebuilt one. Governs R5.
 - KTD6. **An item's key comes from the source, not the engine.** Claude Code: `claude:<uuid>`. Codex: `codex:<session id>:<ordinal>`. The key is the source place that R13 and R14 speak of; the file path and line number are stored beside it for lookup, and events hold all three. When a key appears in two files, the file whose path sorts first wins, whatever the reading order. Codex fork copies and `compacted` records are skipped. Governs R5, R7, R13.
 - KTD7. **Reading resumes from a byte position per file.** Only complete lines are read. A line that fails to parse is skipped and counted, because Codex has broken lines in the middle of files. The unique key makes a second read add nothing; an event's key is its file and line. A file shorter than its saved position has its items removed and is read again from the start. Governs R7.
 - KTD8. **The context of an item is decided by an ordered rule.** First match wins:
   1. a correction Robert has recorded for a path prefix;
-  2. the last segment of Codex's `git.repository_url`;
-  3. a worktree path, which names its repository: `.t3/worktrees/<repo>/…` or `<repo>/.claude/worktrees/…`;
-  4. a T3 Code scratch folder or a temporary folder, which makes the session its own context;
-  5. the longest known project root that contains the working directory, named by its folder;
-  6. any other working directory, which makes the session its own context;
-  7. no working directory, which gives unknown.
-  Known project roots come from the T3 extract and from the machine's config. Governs R16.
-- KTD9. **The event log is one JSON-lines file per machine per month, and the database derives from it.** Events have four kinds: proposal, judgement, recall and context correction. Writing an event appends a line to `events/<machine>/<YYYY-MM>.jsonl` and then reads it in through the same loop that reads session files. A rebuild is that loop run on an empty database. Every event records what wrote it: the page, or a named command and who called it. When one connection has two judgements, the later one holds. Governs R3, R9, R13.
+  2. a worktree path, which names its repository: `.t3/worktrees/<repo>/…` or `<repo>/.claude/worktrees/…`;
+  3. the longest known project root that contains the working directory, named by its folder;
+  4. the last segment of Codex's `git.repository_url`;
+  5. a T3 Code scratch folder, a temporary folder or any other working directory, which makes the session its own context;
+  6. no working directory, which gives unknown.
+  Known project roots are T3 Code's project roots from the extract, without its scratch root, and every direct child of a project parent folder. The engine's config lists the parent folders and the temporary-folder prefixes for both machines' paths; on the first machine the parents are `~/code` and `~/Projects`. Without the parent folders, a repository T3 Code does not know would split into one context per session. The Codex URL comes after the roots so that Claude Code and Codex sessions in one folder get one name. Contexts are worked out again for every item at the end of each read, so a new root or a correction reaches items stored earlier. Governs R16.
+- KTD9. **The event log is one JSON-lines file per machine per month, and the database derives from it.** Events have four kinds: proposal, judgement, recall and context correction. Writing an event appends a line to `events/<machine>/<YYYY-MM>.jsonl` and then reads it in through the same loop that reads session files. A rebuild is that loop run on an empty database. Every event records what wrote it: the page, or a named command and who called it. When one connection has two judgements, the later one holds. After a mark on the page or a context correction, the program copies this machine's event files to the bucket, so Robert's own decisions do not wait on one disk for the daily copy. A failed copy is reported and the event stays in the local file. Governs R3, R9, R13.
 - KTD10. **A connection's identity is its kind plus the sorted keys of the items it joins, and the fixed rules run in this order.** Governs R11, R14.
   1. Drop when the kind is not one of the six in `wiki/hand-run-test.md`.
   2. Drop when any quote is not found in its cited item. Runs of whitespace compare as one space.
   3. Drop when fewer than two quotes come from items the person wrote that carry a time.
-  4. A quote that contains another counted quote, or is contained in one, counts once. This stops an answer the engine gave, pasted into a new prompt, from pairing with its own source.
+  4. A quote that contains another counted quote, or is contained in one, counts once, compared as in rule 2. This stops an answer the engine gave, pasted into a new prompt, from pairing with its own source.
   5. Drop when the counted quotes come from fewer than two contexts. An item with unknown context counts toward none.
   6. Drop when a connection with the same identity has been judged.
   7. Merge when a connection with the same identity is already waiting.
   8. Otherwise keep, by writing a proposal event.
-- KTD11. **A coding agent runs the model step and calls the program.** `candidates` prints the person's messages; the agent restates and proposes in a file; `propose` applies KTD10. The procedure is `engine-zero/passes/connection-pass.md`. The engine sends session text nowhere, so text reaches only the agent Robert starts the pass in. Governs R6, R10, R18.
-- KTD12. **The page is served by the program and reached through exe.dev's private proxy.** It is plain server-rendered HTML with one form per connection and a hidden token made at start, which stops a forged form post and protects nothing else. exe.dev serves ports 3000 to 9999 only to people with access to the machine; the port is never set public. Governs R12, R15.
-- KTD13. **Masking runs before anything is stored, with a fixed list of patterns.** Quotes are checked against the masked text, so the event log holds masked text only. The list covers cloud and model-service key shapes, token prefixes, private key blocks, bearer headers, and `password=`-style assignments; gitleaks' default rules are the reference for the shapes. Governs R17.
-- KTD14. **Private files live outside the repository, and the program refuses to run otherwise.** Config is in `~/.config/engine-zero/`, the record folder and database in `~/.local/share/engine-zero/`, and bucket credentials in rclone's own config. Governs R15.
+- KTD11. **A coding agent runs the model step and calls the program.** `candidates` prints the person's messages; the agent restates and proposes in a file in the private proposals folder (KTD14); `propose` applies KTD10. The procedure is `engine-zero/passes/connection-pass.md`. The engine sends session text nowhere, so text reaches only the agent Robert starts the pass in. Governs R6, R10, R18.
+- KTD12. **The page is served by the program and reached through exe.dev's private proxy.** It is plain server-rendered HTML with one form per connection and a hidden token made at start, which stops a forged form post and protects nothing else. exe.dev serves ports 3000 to 9999 only to people with access to the machine; the port is never set public. A mark is accepted only with the `X-ExeDev-UserID` header that exe.dev's proxy adds for a signed-in user, and the judgement event records that id. Governs R12, R15.
+- KTD13. **Masking runs before anything is stored, with a fixed list of patterns.** Quotes are checked against the masked text, so the event log holds masked text only. The list covers cloud and model-service key shapes, token prefixes, private key blocks, bearer headers, credentials inside a URL, and assignments to a name that ends in KEY, TOKEN, SECRET or PASSWORD; gitleaks' default rules are the reference for the shapes. Governs R17.
+- KTD14. **Private files live outside the repository, and the program refuses to run otherwise.** Config is in `~/.config/engine-zero/`, the record folder, database and proposals files in `~/.local/share/engine-zero/`, and bucket credentials in rclone's own config. `propose` reads only from the proposals folder there. Governs R15.
 
 ### Assumptions
 
@@ -364,7 +365,7 @@ stateDiagram-v2
 ### System-Wide Impact
 
 - **The engine's output comes back as input.** Sessions in which an agent runs a pass or asks a question are later read like any other. Tool results are not stored (A1), an agent's restatement is the agent's (KTD5), and a pasted answer cannot pair with its own source (KTD10).
-- **Agents run as Robert's user.** The program cannot stop an agent on the machine from writing an event file or calling the page. No command writes a judgement, every event records what wrote it (KTD9), and the procedure file tells agents not to write events or call the page.
+- **Agents run as Robert's user.** The program cannot stop an agent on the machine from writing an event file or calling the page. No command writes a judgement, a mark needs exe.dev's user header (KTD12), every event records what wrote it (KTD9), and the procedure file tells agents not to write events or call the page.
 - **The author rules depend on T3 Code's private tables.** See Risks.
 
 ### Output Structure
@@ -395,6 +396,8 @@ engine-zero/
     fixtures/    made-up sessions and a made-up T3 database
 ```
 
+Fixtures are written by hand from the tables in this plan. No line is copied or trimmed from a real session file or the real T3 database, and every key-shaped string is plainly fake.
+
 In the bucket, and mirrored in the record folder except `old/`:
 
 ```text
@@ -403,7 +406,7 @@ sources/<machine>/codex/…         as Codex wrote it
 sources/<machine>/t3/messages.jsonl
 sources/<machine>/t3/projects.jsonl
 events/<machine>/<YYYY-MM>.jsonl
-old/<time>/…                      versions rclone moved aside
+old/<time>/<same path>            versions rclone moved aside
 ```
 
 ### Risks
@@ -412,10 +415,10 @@ old/<time>/…                      versions rclone moved aside
 | --- | --- |
 | T3 Code changes its database tables. | The extract fails loudly and the file copy still runs. Prompts read meanwhile are unknown, never the person's, and are settled on a later read. |
 | The text-hash match misses a prompt T3 Code or the tool rewrote. On the first machine 28 Claude Code and about 7 Codex prompts matched no row, and 14 typed messages exist only as queue records. | Those are unknown. The count is reported by the reader so the loss is visible. |
-| Masking misses a secret of an unusual shape. | Only the person's and agents' prose is stored, not tool output, where most secrets are. The page and the event log are private. |
-| An agent writes a judgement or a context correction that Robert did not make. | The program cannot prevent it. Events record what wrote them, so such events can be found and set aside. |
+| Masking misses a secret of an unusual shape. | Tool call inputs and results, where most secrets are, are not stored. Command output and task notifications that arrive in the user's turn are stored, and are the likeliest place for a miss. The page and the event log are private, and agents that ask are told the text is private. |
+| An agent writes a judgement or a context correction that Robert did not make. | A mark without exe.dev's user header is refused, so a plain local request writes nothing. An agent that forges the header or writes the event file itself cannot be stopped; the procedure file forbids both. Events written by a command name the command and its caller, so those can be found and set aside. |
 | A session file is rewritten to a longer size, which the reader does not notice. | The copy still keeps the old version in `old/`. No rewrite has been observed. |
-| A wrong rclone command deletes bucket files. | The program is the only caller and has no delete path. The backup folder keeps every overwritten version. |
+| A wrong rclone command deletes bucket files. | The program has no delete path, and the backup folder keeps every overwritten version. An agent can still run rclone itself with the stored credentials; the write-once design under Scope Boundaries answers that if it ever happens. |
 | The backup folder grows, because each run keeps the old version of every file that grew. | One run a day. If the cost matters, the write-once design under Scope Boundaries replaces it. |
 | Some hand-run connections drew on repositories, not sessions, and cannot pass KTD10. | They are listed for Robert and not forced onto the page. |
 | The stored text is small, about 0.2 MB of the person's words on the first machine, so few operations will be slow. | R19 records that as a finding. |
@@ -429,6 +432,8 @@ old/<time>/…                      versions rclone moved aside
 - The link from a T3 thread to a provider session is `orchestration_v2_projection_provider_threads.payload_json.nativeThreadRef.nativeId`. T3 Code's database is `~/.t3/userdata/statev2.sqlite`, opened read-only.
 - rclone's `--backup-dir` moves files that would be overwritten into another folder on the same remote: https://rclone.org/docs/#backup-dir-string
 - exe.dev serves ports 3000 to 9999 only to people with access to the machine: https://exe.dev/docs/proxy.md
+- exe.dev's proxy adds `X-ExeDev-UserID` and `X-ExeDev-Email` to requests from a signed-in user: https://exe.dev/docs/login-with-exe.md
+- rclone stops a file that changes while it uploads unless `--local-no-check-updated` is passed, and overwrites a file already at the same path in the backup folder: https://rclone.org/local/ and https://rclone.org/docs/#backup-dir-string
 - A check of 344 recent session files over 28 minutes found 6 that grew and none whose earlier content changed. It is too short to prove the tools only append.
 
 ---
@@ -441,12 +446,15 @@ old/<time>/…                      versions rclone moved aside
 | U2 | Store and the reading loop | `engine-zero/src/store.rs`, `engine-zero/src/ingest.rs`, `engine-zero/src/mask.rs` | U1 |
 | U3 | Claude Code reader | `engine-zero/src/claude.rs` | U2 |
 | U4 | Codex reader | `engine-zero/src/codex.rs` | U2 |
-| U5 | Contexts | `engine-zero/src/context.rs` | U3, U4 |
 | U6 | Event log and rebuild | `engine-zero/src/events.rs` | U2 |
-| U7 | Proposals and the fixed rules | `engine-zero/src/propose.rs`, `engine-zero/passes/connection-pass.md` | U5, U6 |
+| U5 | Contexts | `engine-zero/src/context.rs` | U3, U4, U6 |
+| U7 | Proposals and the fixed rules | `engine-zero/src/propose.rs` | U5, U6 |
 | U8 | Judging page | `engine-zero/src/page.rs` | U7 |
 | U9 | First judging | `wiki/engine-zero-notes.md` | U1 to U8 |
+| U11 | Connection pass | `engine-zero/src/propose.rs`, `engine-zero/passes/connection-pass.md` | U7, U9 |
 | U10 | Asking | `engine-zero/src/ask.rs` | U6 |
+
+Units are built in the order of the rows above. A unit's number is its name, not its place in the order.
 
 ### U1. Program skeleton and the copy
 
@@ -455,16 +463,19 @@ old/<time>/…                      versions rclone moved aside
 - **Dependencies:** None in code. Robert provides the bucket and its credentials.
 - **Files:** `engine-zero/Cargo.toml`, `engine-zero/src/main.rs`, `engine-zero/src/config.rs`, `engine-zero/src/copy.rs`, `engine-zero/src/t3.rs`, `engine-zero/tests/copy.rs`, `engine-zero/tests/t3.rs`, `engine-zero/tests/fixtures/t3/`, `engine-zero/README.md`, `.gitignore`, `AGENTS.md`.
 - **Approach:**
-  1. `copy` writes the T3 extract, then copies each source folder and this machine's event files to the bucket.
+  1. `copy` copies each source folder to the bucket, then writes the T3 extract and copies it and this machine's event files. The extract comes second so that every copied prompt already has its T3 row.
   2. `pull` copies `sources/` and `events/` from the bucket into the record folder.
   3. When T3 Code's database is absent, the extract is skipped. When its tables are not the expected ones, the file copy still runs and the command ends with an error.
   4. `engine-zero/README.md` gives the install, config and daily schedule steps for both machines. The schedule on the first machine is installed in this unit.
   5. `AGENTS.md` gains a layout row for `engine-zero/`, and `.gitignore` excludes the build folder.
+  6. The machine name comes from config and has no default. The two machines must use different names, and the README says so.
 - **Execution note:** rclone is not installed on the first machine. Install it first, and prove the flags on local folders before the first run against the real bucket.
 - **Test scenarios:** The tests run rclone between local folders. That catches wrong flags and layout and misses behaviour particular to R2, which the first real run checks.
   - Covers AE1. A file is copied, deleted at the source, and the copy runs again: the file is still at the destination.
   - Covers AE8. Earlier bytes of a copied file change at the source and the copy runs: the destination holds the new file and `old/` holds the previous one.
   - A copied file grows: the destination holds the grown file and `old/` holds the shorter one.
+  - A copied file changes twice, with a run after each: `old/` holds both earlier versions, each under the path the file had.
+  - A config with no machine name is refused.
   - A second run with no changes transfers nothing.
   - `pull` into an empty record folder reproduces `sources/` and `events/` and leaves `old/` out.
   - `pull` leaves this machine's event file untouched when the bucket holds an older copy, and restores it when it is missing.
@@ -473,7 +484,7 @@ old/<time>/…                      versions rclone moved aside
   - With no T3 database, `copy` succeeds.
   - With unexpected T3 tables, the files are copied and the command ends with an error.
   - A config whose record folder or database is inside the repository is refused.
-- **Verification:** After the first real run, the bucket lists both source trees and the T3 extract for the first machine. A second run moves only files that grew. The daily schedule is in place.
+- **Verification:** After the first real run, the bucket lists both source trees and the T3 extract for the first machine. A second run moves only files that grew. A run made while a session is being written ends without error. The daily schedule is in place.
 
 ### U2. Store and the reading loop
 
@@ -481,7 +492,7 @@ old/<time>/…                      versions rclone moved aside
 - **Requirements:** R3, R7, R17; AE4, AE10; KTD6, KTD7, KTD13.
 - **Dependencies:** U1.
 - **Files:** `engine-zero/src/store.rs`, `engine-zero/src/ingest.rs`, `engine-zero/src/mask.rs`, `engine-zero/tests/ingest.rs`, `engine-zero/tests/mask.rs`.
-- **Approach:** The database holds source files with their byte position, items with a full-text index, T3 authorship rows, and events. `read` walks the record folder and hands each new line to the reader for its tree. Text is masked on the way in.
+- **Approach:** The database holds source files with their byte position, items with a full-text index, T3 authorship rows, and events. `read` walks the record folder and hands each new line to the reader for its tree. Text is masked on the way in. `read` prints, for each tool, how many records it stored and skipped by record type, so a shape the author tables do not name is seen.
 - **Test scenarios:**
   - Covers AE4. A file grows by three messages: three items are added; a second read adds none.
   - A last line with no newline is left alone, and is added once after it is completed.
@@ -508,13 +519,14 @@ old/<time>/…                      versions rclone moved aside
   - A plain prompt whose hash matches a T3 row with `createdBy: user` is the person's; with `createdBy: agent` it is another agent's.
   - A plain prompt in a T3-linked session with no matching row is unknown, and becomes the person's on a later read once the row exists.
   - Two prompts with the same text in one session, one T3 row from the person and one from an agent: both are unknown.
+  - A prompt matched to the person's row becomes unknown on a later read, once an agent's row with the same text has arrived.
   - A command output wrapper that also carries a human marker is a tool's.
   - A plain prompt in an SDK session with no T3 link is unknown.
   - A terminal prompt with a human marker is the person's; without one it is unknown.
   - An assistant `text` block is the agent's; thinking and tool calls are not stored.
   - `api-request-blob` copies of a message add no item.
   - An item carries its time, working directory, file path, line number and a key made from `uuid`.
-- **Verification:** On the first machine no item from a `subagents/` file is the person's, and the count of the person's Claude Code items is close to the 736 measured.
+- **Verification:** On the first machine no item from a `subagents/` file is the person's, and among T3-linked sessions the count of the person's Claude Code items is not more than 5 percent below the 736 measured on 16 November 2026. Later sessions only add to it. After the first copy from the second machine, the skipped record types are checked against the table.
 
 ### U4. Codex reader
 
@@ -533,25 +545,7 @@ old/<time>/…                      versions rclone moved aside
   - An `agent_message` addressed to the session's agent is another agent's.
   - An `AgentMessage` item is the agent's; developer messages, injected context, reasoning and tool calls are not stored.
   - An item's key is the session id and `ordinal`.
-- **Verification:** On the first machine the count of the person's Codex items is close to the 239 measured, and no fork copy is stored.
-
-### U5. Contexts
-
-- **Goal:** Every item has a context: a project, its own session, or unknown.
-- **Requirements:** R16; AE9, AE11; KTD8; A4.
-- **Dependencies:** U3, U4.
-- **Files:** `engine-zero/src/context.rs`, `engine-zero/tests/context.rs`.
-- **Approach:** Apply KTD8 when an item is stored. `context set` records a correction as an event and relabels the items it covers.
-- **Test scenarios:**
-  - Covers AE9. Two sessions in two worktrees of one repository get the same project, for both worktree path shapes.
-  - A subfolder of a known project root gets that project.
-  - A Codex repository URL decides the project when the path would give another name.
-  - Two sessions in two scratch folders get two different contexts.
-  - The scratch root in T3 Code's project list is not treated as a project.
-  - A session in a temporary folder is its own context.
-  - A record with no working directory is unknown.
-  - A correction for a path prefix relabels the items under it and holds after a rebuild.
-- **Verification:** On the first machine, the list of contexts with their item counts shows each repository once.
+- **Verification:** On the first machine, among T3-linked sessions the count of the person's Codex items is not more than 5 percent below the 239 measured on 16 November 2026, and no fork copy is stored. After the first copy from the second machine, the skipped record types are checked against the table, because older Codex versions may have written other shapes.
 
 ### U6. Event log and rebuild
 
@@ -563,24 +557,44 @@ old/<time>/…                      versions rclone moved aside
 - **Test scenarios:**
   - Appending an event adds one line to this machine's file for the current month and leaves the earlier lines byte-for-byte the same.
   - Covers AE2. With ten judgements and several recall events, a rebuild gives the same counts, and each judgement shows its connection's kind, places and quotes.
-  - A database rebuilt from the record folder has the same item counts by author and event counts by kind as the one built step by step.
+  - A database rebuilt from the record folder has the same item counts by author and event counts by kind as the one built step by step, also when the T3 rows arrived after their prompts.
   - Reading an event file twice adds no event.
   - An event records what wrote it.
   - Two judgements for one connection: the later one holds.
   - Events in another machine's folder are read as well.
 - **Verification:** A rebuild on the first machine's real record folder gives the same counts as before it.
 
+### U5. Contexts
+
+- **Goal:** Every item has a context: a project, its own session, or unknown.
+- **Requirements:** R16; AE9, AE11; KTD8; A4.
+- **Dependencies:** U3, U4, U6.
+- **Files:** `engine-zero/src/context.rs`, `engine-zero/tests/context.rs`.
+- **Approach:** Apply KTD8 to every item at the end of each read. `context set` records a correction as an event, runs the same step, and copies the event file to the bucket (KTD9).
+- **Test scenarios:**
+  - Covers AE9. Two sessions in two worktrees of one repository get the same project, for both worktree path shapes.
+  - A subfolder of a known project root gets that project.
+  - Two sessions in a child of a project parent folder that T3 Code does not know get the same project.
+  - A Claude Code session and a Codex session in one known folder get the same project when the repository URL gives another name.
+  - A Codex session outside every known root is named by its repository URL.
+  - An item stored before its project root was known gets that project on the next read.
+  - Two sessions in two scratch folders get two different contexts.
+  - The scratch root in T3 Code's project list is not treated as a project.
+  - A session in a temporary folder is its own context.
+  - A record with no working directory is unknown.
+  - A correction for a path prefix relabels the items under it and holds after a rebuild.
+- **Verification:** On the first machine, the list of contexts with their item counts shows each repository once, and no session context sits in a folder that is a repository.
+
 ### U7. Proposals and the fixed rules
 
-- **Goal:** An agent can propose connections, and only those that pass the rules reach the page.
-- **Requirements:** R6, R10, R11, R14, R18; AE5, AE6, AE11; KTD10, KTD11; A6.
+- **Goal:** Proposed connections are checked, and only those that pass the rules reach the page.
+- **Requirements:** R10, R11, R14; AE5, AE6, AE11; KTD10, KTD14.
 - **Dependencies:** U5, U6.
-- **Files:** `engine-zero/src/propose.rs`, `engine-zero/passes/connection-pass.md`, `engine-zero/tests/propose.rs`.
+- **Files:** `engine-zero/src/propose.rs`, `engine-zero/tests/propose.rs`, `engine-zero/README.md`.
 - **Approach:**
-  1. `candidates` prints the person's items with key, time, context and masked text, optionally from a date.
-  2. `propose` reads a file of proposals, applies KTD10, and prints for each one whether it was kept, merged or dropped, and why. A malformed entry is reported by its number and the rest are still processed. The command ends with an error only when the file cannot be read at all.
-  3. A proposal may carry an origin label, which is stored in its event.
-  4. `engine-zero/passes/connection-pass.md` tells the agent how to run a pass: read the candidates, restate each as a mechanism, propose with one of the six kinds, and quote exactly. It gives the shape of the proposals file with one made-up example. It tells the agent not to call `ask` during a pass (R9), not to write event files, and not to call the page.
+  1. `propose` reads a file of proposals from the private proposals folder and refuses any other path. It applies KTD10 and prints for each proposal whether it was kept, merged or dropped, and why. A malformed entry is reported by its number and the rest are still processed. The command ends with an error only when the file cannot be read at all.
+  2. A proposal may carry an origin label, which is stored in its event.
+  3. `engine-zero/README.md` gives the shape of the proposals file with one made-up example.
 - **Test scenarios:**
   - Two exact quotes from the person in two projects: kept, and one proposal event is written.
   - Covers AE5. Quotes from the agent only: dropped. A quote not found in its cited item: dropped.
@@ -596,8 +610,9 @@ old/<time>/…                      versions rclone moved aside
   - The same connection twice in one file: one proposal event.
   - Covers AE6. A connection judged with each of the three marks is dropped when proposed again, also after a rebuild.
   - A connection already waiting is merged and no second event is written.
-  - `candidates` prints only the person's items, and a secret in the fixture appears masked.
-- **Verification:** An agent given only the procedure file runs a pass on the first machine's real data. It ends with proposals waiting and a printed reason for each one dropped.
+  - Two quotes where one contains the other and differs only in whitespace: dropped.
+  - A proposals file outside the private proposals folder is refused.
+- **Verification:** On the first machine's real data, a proposals file with one true pair of the person's quotes from two projects is kept, and the same file with one quote altered is dropped.
 
 ### U8. Judging page
 
@@ -606,14 +621,15 @@ old/<time>/…                      versions rclone moved aside
 - **Dependencies:** U7.
 - **Files:** `engine-zero/src/page.rs`, `engine-zero/tests/page.rs`.
 - **Execution note:** Settle the listening address first. The page listens on the local address if exe.dev's proxy reaches it there. If it must listen on every address, every request must carry a secret that the program prints at start.
-- **Approach:** `page` serves the waiting connections, each with its kind, the agent's one-line statement, and its quotes with context and date. Marking one writes a judgement event. `stats` prints counts by mark and by origin label.
+- **Approach:** `page` serves the waiting connections, each with its kind, the agent's one-line statement, and its quotes with context and date. Marking one writes a judgement event and copies the event file to the bucket (KTD9). `stats` prints counts by mark and by origin label.
 - **Test scenarios:**
   - The page lists a waiting connection with its kind, statement, quotes, contexts and dates, and omits a judged one.
-  - A mark sent with the right token writes a judgement event holding the whole connection and naming the page as its writer, and the connection leaves the page.
+  - A mark sent with the right token and exe.dev's user header writes a judgement event holding the whole connection, naming the page as its writer and recording the user id. The connection leaves the page, and the event file at the copy destination holds the judgement.
   - A mark sent with no token or a wrong one is refused and writes nothing.
+  - A mark sent with the right token and no user header is refused and writes nothing.
   - A mark outside the three is refused.
   - The origin label is not shown on the page.
-  - A quote that contains markup is shown as text.
+  - A statement, a context name and a quote that each contain markup are shown as text.
   - `stats` counts judgements by mark and by origin label.
 - **Verification:** In a browser not signed in to exe.dev, the page address leads to the sign-in. Signed in as Robert, it loads. The port is not set public.
 
@@ -625,12 +641,26 @@ old/<time>/…                      versions rclone moved aside
 - **Files:** `wiki/engine-zero-notes.md`, `wiki/index.md`, `wiki/log.md`.
 - **Approach:**
   1. Run the copy, the pull and the read on the first machine.
-  2. The agent writes the hand-run connections from Robert's private notes as a proposals file, labelled by origin. Those the rules drop are listed for Robert.
+  2. The agent writes the hand-run connections from Robert's private notes as a proposals file in the private proposals folder, labelled by origin. Those the rules drop are listed for Robert.
   3. The agent adds false connections, labelled as planted.
   4. Robert marks each connection on the page.
   5. The agent writes the shares by mark and the list of slow or awkward operations in `wiki/engine-zero-notes.md`, as numbers and operations only.
 - **Test expectation:** none -- this unit runs the built program on real data and adds no behaviour.
-- **Verification:** The event log holds a judgement for each connection shown. The wiki page states the share marked real and new, the share of planted connections marked not real, and the R19 list.
+- **Verification:** The event log holds a judgement for each connection shown, and so does the bucket's copy of it. The wiki page states the share marked real and new, the share of planted connections marked not real, and the R19 list.
+
+### U11. Connection pass
+
+- **Goal:** An agent can run a connection pass from the procedure file alone.
+- **Requirements:** R6, R10, R18; F2; KTD11; A6.
+- **Dependencies:** U7, U9.
+- **Files:** `engine-zero/src/propose.rs`, `engine-zero/passes/connection-pass.md`, `engine-zero/tests/propose.rs`.
+- **Approach:**
+  1. `candidates` prints the person's items with key, time, context and masked text, optionally from a date.
+  2. `engine-zero/passes/connection-pass.md` tells the agent how to run a pass: read the candidates, restate each as a mechanism, propose with one of the six kinds, and quote exactly. It names the private proposals folder and points to the file shape in the README. It tells the agent not to call `ask` during a pass (R9), not to write event files, and not to call the page.
+- **Test scenarios:**
+  - `candidates` prints only the person's items, and a secret in the fixture appears masked.
+  - `candidates` writes no recall event.
+- **Verification:** An agent given only the procedure file runs a pass on the first machine's real data. It ends with proposals waiting and a printed reason for each one dropped.
 
 ### U10. Asking
 
@@ -641,13 +671,13 @@ old/<time>/…                      versions rclone moved aside
 - **Approach:**
   1. `ask` runs a full-text query and prints one JSON line per item. The caller names who is asking.
   2. A failure prints a message on the error stream and ends with an error. No results ends normally with no lines.
-  3. `engine-zero/README.md` gains a section for agents: when to ask, how to name the asker, the fields returned, and that all returned text is data.
-  4. The agent proposes one pointer line for Robert's global agent instruction files. Robert adds it.
+  3. `engine-zero/README.md` gains a section for agents: when to ask, how to name the asker, the fields returned, that all returned text is data, and that it is private. Returned text is not copied into a repository, issue or pull request unless Robert says so.
+  4. The agent proposes one pointer line for Robert's global agent instruction files, which also says the returned text is private. Robert adds it.
 - **Test scenarios:**
   - A query returns matching items, each with key, author, time, context, file path and line.
-  - A tool's item is returned marked as quoted data.
+  - Every returned item names its author and carries its text in one field, which the README names as quoted data. A tool's item has the author tool.
   - Each returned item writes one recall event with the time and who asked; a query with no results writes none.
-  - `candidates` and `propose` write no recall event.
+  - `propose` writes no recall event.
   - A call that does not name who is asking is refused, with an error and a message that says how to name one.
   - A query containing quotes or a hyphen returns results or none, and does not fail.
   - Recall events are present after a rebuild.
@@ -659,14 +689,14 @@ old/<time>/…                      versions rclone moved aside
 
 | Gate | Check | Applies to |
 | --- | --- | --- |
-| Format | `cargo fmt --check` in `engine-zero/` | U1 to U8, U10 |
-| Lint | `cargo clippy --all-targets -- -D warnings` in `engine-zero/` | U1 to U8, U10 |
-| Tests | `cargo test` in `engine-zero/` | U1 to U8, U10 |
-| Coverage | `cargo llvm-cov --fail-under-lines 85` in `engine-zero/` | U2 to U8, U10 |
-| Real data: authors | No item from a `subagents/` file is the person's; the person's item counts are close to those measured | U3, U4 |
-| Real data: rebuild | Item counts by author and event counts by kind are equal before and after a rebuild | U6 |
+| Format | `cargo fmt --check` in `engine-zero/` | U1 to U8, U10, U11 |
+| Lint | `cargo clippy --all-targets -- -D warnings` in `engine-zero/` | U1 to U8, U10, U11 |
+| Tests | `cargo test` in `engine-zero/` | U1 to U8, U10, U11 |
+| Coverage | `cargo llvm-cov --fail-under-lines 85` in `engine-zero/` | U1 to U8, U10, U11 |
+| Real data: authors | No item from a `subagents/` file is the person's; among T3-linked sessions the person's item counts are not more than 5 percent below the 736 and 239 measured | U3, U4 |
+| Real data: rebuild | Item counts by author and by context, and event counts by kind, are equal before and after a rebuild | U6, and again after U5 |
 | Real data: no loss | A bucket listing after two daily runs still holds every file from the first run | U1 |
-| Privacy | `git ls-files` shows no record folder, database, config or real session text; fixtures are made up | every unit |
+| Privacy | Before each push, `git status` and `git ls-files` show no record folder, database, config, proposals file or real session text; fixtures are written by hand | every unit |
 | Page access | The page address leads to the exe.dev sign-in when not signed in | U8 |
 
 ## Definition of Done
@@ -678,3 +708,13 @@ old/<time>/…                      versions rclone moved aside
 - The copy runs daily on the first machine. Robert has the steps for the second machine in `engine-zero/README.md`.
 - Code tried and abandoned along the way is removed.
 - The wiki's overview, index and log describe what was built.
+
+## Deferred / Open Questions
+
+These are review items left for Robert. They do not block the units before the first judging.
+
+### From 2026-11-16 review
+
+- **Hand-run connections with no session quotes cannot go on the page** — Key Flows F6 (First judging); Risks table; U9 (First judging), Approach step 2 (P1, coherence, confidence 100)
+
+  The first judging may show few real connections, because the hand-run test drew mostly on repositories and the engine holds sessions only. F6 (the first judging flow) says the hand-run connections are put on the page; U9 (the first judging unit) puts on the page only those that can be quoted from Robert's session messages and lists the rest. Robert has to choose: accept that, with a real connection pass run first when too few reach the page, or have the page also take connections that have no session quotes.
