@@ -77,3 +77,7 @@ Read at Robert's request before confirming the scope of the first engine. Stub: 
 ## [2026-11-15] decision | Build our own reader
 
 Robert decided the project writes its own reader for agent session files, so that cass is not a dependency, and left the question of a fork to the agent. The agent decided against a fork, because of the licence rider and the size of cass. Record: `raw/sessions/2026-11-15-build-our-own-reader.md`.
+
+## [2026-11-16] decision | Scope confirmed, Rust, requirements plan written
+
+Robert confirmed the scope of the first engine and chose Rust. Wrote the requirements plan: `docs/plans/2026-11-16-0113-feat-engine-zero-plan.md`. Record: `raw/sessions/2026-11-16-scope-confirmed-rust.md`.

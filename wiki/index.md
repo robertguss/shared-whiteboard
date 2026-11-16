@@ -45,6 +45,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [transcripts as the record](../raw/sessions/2026-11-15-transcripts-as-the-record.md) | Robert proposes starting from the agent session files on both machines, 15 November 2026 |
 | [SQLite first](../raw/sessions/2026-11-15-sqlite-first.md) | Robert decides the first engine is a throwaway on SQLite, 15 November 2026 |
 | [build our own reader](../raw/sessions/2026-11-15-build-our-own-reader.md) | Robert decides against cass as a dependency, 15 November 2026 |
+| [scope confirmed, Rust](../raw/sessions/2026-11-16-scope-confirmed-rust.md) | Robert confirms the scope of the first engine and chooses Rust, 16 November 2026 |
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |
@@ -54,6 +55,12 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [research: biology of memory](../raw/sources/2026-11-15-research-biology-of-memory.md) | Engrams, plasticity, consolidation, forgetting, and how settled each is |
 | [research: idea generation](../raw/sources/2026-11-15-research-idea-generation.md) | How ideas form, brainstorming with AI, lessons from earlier tools |
 | [research: storage core](../raw/sources/2026-11-15-research-storage-core.md) | Which storage-core choices shape memory and which are only metaphor |
+
+## Plans
+
+| Plan | What it covers |
+| --- | --- |
+| [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md) | Requirements for the first engine: keep, read, store, connect, judge |
 
 ## Prototypes
 

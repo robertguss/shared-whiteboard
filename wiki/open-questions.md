@@ -5,7 +5,7 @@ sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-s
 ---
 # Open questions
 
-In rough order of how much each one changes what gets built. Before any of them: the scope of the first engine, which Robert has decided is a throwaway on SQLite. Robert has accepted the statement of [the problem](the-problem.md) for now. Settled: the shape of the views ([shape options](shape-options.md)), and that it is one brain across all of the person's work, not one per project.
+In rough order of how much each one changes what gets built. The scope of the first engine is settled; see the [engine zero plan](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md). The questions below remain open beyond it. Robert has accepted the statement of [the problem](the-problem.md) for now. Settled: the shape of the views ([shape options](shape-options.md)), and that it is one brain across all of the person's work, not one per project.
 
 | # | Question | Why it matters | Agent's lean |
 | --- | --- | --- | --- |
