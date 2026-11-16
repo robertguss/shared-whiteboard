@@ -1,4 +1,5 @@
 use crate::Result;
+use crate::claude;
 use crate::config::Config;
 use crate::store::{self, Item};
 use rusqlite::Connection;
@@ -21,7 +22,7 @@ pub enum Outcome {
 
 pub type Reader = fn(&Value, &Place) -> Outcome;
 
-pub const READERS: &[(&str, Reader)] = &[];
+pub const READERS: &[(&str, Reader)] = &[("claude", claude::read)];
 
 #[derive(Default)]
 pub struct Counts {

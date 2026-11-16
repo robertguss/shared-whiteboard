@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS files (path TEXT PRIMARY KEY, position INTEGER NOT NU
 CREATE TABLE IF NOT EXISTS items (
   id INTEGER PRIMARY KEY, key TEXT NOT NULL UNIQUE, tool TEXT NOT NULL, session_id TEXT NOT NULL,
   author TEXT NOT NULL, time TEXT, cwd TEXT, repo_url TEXT, text TEXT NOT NULL, text_hash TEXT NOT NULL,
-  file TEXT NOT NULL, line INTEGER NOT NULL, prompt INTEGER NOT NULL, fallback_author TEXT NOT NULL);
+  other_hash TEXT, file TEXT NOT NULL, line INTEGER NOT NULL, prompt INTEGER NOT NULL, fallback_author TEXT NOT NULL);
 CREATE INDEX IF NOT EXISTS items_file ON items (file);
 CREATE INDEX IF NOT EXISTS items_prompt ON items (session_id, text_hash) WHERE prompt;
 CREATE VIRTUAL TABLE IF NOT EXISTS items_fts USING fts5 (text, content = 'items', content_rowid = 'id');
@@ -32,12 +32,12 @@ CREATE TABLE IF NOT EXISTS t3_projects (
 ";
 
 const INSERT_ITEM: &str = "
-INSERT INTO items (key, tool, session_id, author, time, cwd, repo_url, text, text_hash, file, line, prompt, fallback_author)
-VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13)
+INSERT INTO items (key, tool, session_id, author, time, cwd, repo_url, text, text_hash, file, line, prompt, fallback_author, other_hash)
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)
 ON CONFLICT (key) DO UPDATE SET tool = excluded.tool, session_id = excluded.session_id,
   author = excluded.author, time = excluded.time, cwd = excluded.cwd, repo_url = excluded.repo_url,
   text = excluded.text, text_hash = excluded.text_hash, file = excluded.file, line = excluded.line,
-  prompt = excluded.prompt, fallback_author = excluded.fallback_author
+  prompt = excluded.prompt, fallback_author = excluded.fallback_author, other_hash = excluded.other_hash
 WHERE (excluded.file, excluded.line) < (items.file, items.line)";
 
 const INSERT_T3_MESSAGE: &str = "
@@ -54,7 +54,7 @@ UPDATE items SET author = coalesce((
   SELECT CASE WHEN count(*) = sum(t.created_by IS 'user') THEN 'person'
               WHEN count(*) = sum(t.created_by IS 'agent') THEN 'other_agent'
               ELSE 'unknown' END
-  FROM t3_messages t WHERE t.session_id = items.session_id AND t.text_hash = items.text_hash
+  FROM t3_messages t WHERE t.session_id = items.session_id AND t.text_hash IN (items.text_hash, items.other_hash)
   HAVING count(*) > 0), fallback_author)
 WHERE prompt";
 
@@ -112,6 +112,7 @@ pub struct Item {
     pub line: i64,
     pub prompt: bool,
     pub fallback_author: Author,
+    pub also_sent_as: Option<String>,
 }
 
 pub fn open(path: &Path) -> Result<Connection> {
@@ -171,6 +172,7 @@ pub fn insert_item(db: &Connection, item: &Item) -> Result<()> {
         item.line,
         item.prompt,
         item.fallback_author.as_str(),
+        item.also_sent_as.as_deref().map(text_hash),
     ])?;
     Ok(())
 }
@@ -216,5 +218,6 @@ fn item(row: &Row) -> rusqlite::Result<Item> {
         line: row.get(9)?,
         prompt: row.get(10)?,
         fallback_author: Author::parse(&row.get::<_, String>(11)?),
+        also_sent_as: None,
     })
 }

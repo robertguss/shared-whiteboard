@@ -1,3 +1,4 @@
+pub mod claude;
 pub mod config;
 pub mod copy;
 pub mod ingest;

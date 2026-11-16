@@ -88,6 +88,7 @@ fn tiny(value: &Value, place: &Place) -> Outcome {
         file: place.file.into(),
         line: place.line,
         prompt: value["prompt"] == true,
+        also_sent_as: None,
         fallback_author: fallback,
     }])
 }
