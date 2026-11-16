@@ -14,6 +14,7 @@ The knowledge base is an LLM wiki, after Andrej Karpathy's pattern (`raw/sources
 | `wiki/index.md` | Catalogue of every wiki page | Agent, on every change |
 | `wiki/log.md` | Append-only history | Agent, on every change |
 | `prototypes/` | Numbered throwaway prototypes | Agent |
+| `engine-zero/` | The first engine: a Rust command-line program; see its `README.md` | Agent |
 | `docs/plans/`, `docs/solutions/` | Compound Engineering plans and learnings, created when first needed | Agent |
 
 ## Rules
