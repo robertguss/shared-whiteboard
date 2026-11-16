@@ -2,7 +2,6 @@ use engine_zero::ingest::{Outcome, Place, Report, read};
 use engine_zero::store::{self, Author, Item};
 use rusqlite::Connection;
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
@@ -112,15 +111,11 @@ fn prompt(key: &str, text: &str, fallback: &str) -> String {
 }
 
 fn t3_row(session: &str, created_by: &str, text: &str) -> String {
-    let hash: String = Sha256::digest(text.trim())
-        .iter()
-        .map(|b| format!("{b:02x}"))
-        .collect();
     format!(
         "{}\n",
         json!({"messageId": format!("{session}-{created_by}-{text}"), "threadId": "thread-a",
             "sessionId": session, "createdBy": created_by, "creationSource": "web",
-            "createdAt": "2026-01-01T10:00:00.000Z", "textSha256": hash})
+            "createdAt": "2026-01-01T10:00:00.000Z", "textSha256": store::text_hash(text)})
     )
 }
 

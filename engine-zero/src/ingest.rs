@@ -155,6 +155,9 @@ fn read_file(
         store::forget(db, file)?;
         (position, line) = (0, 0);
     }
+    if length == position {
+        return Ok(());
+    }
     let mut bytes = vec![];
     BufReader::new(&source).read_until(b'\n', &mut bytes)?;
     let head = serde_json::from_slice(&bytes).unwrap_or(Value::Null);
@@ -177,7 +180,7 @@ fn read_file(
         match handler {
             Handler::T3Messages => store::insert_t3_message(db, file, line, &value.to_string())?,
             Handler::T3Projects => store::insert_t3_project(db, file, line, &value.to_string())?,
-            Handler::Events if !events::KINDS.contains(&value["kind"].as_str().unwrap_or("")) => {
+            Handler::Events if !events::known_kind(&value) => {
                 let kind = value["kind"].as_str().unwrap_or("untyped").to_string();
                 *counts.skipped.entry(kind).or_default() += 1;
                 continue;

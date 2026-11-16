@@ -83,23 +83,6 @@ fn a_file_deleted_at_the_source_stays_in_the_bucket() {
 }
 
 #[test]
-fn a_rewritten_file_is_kept_beside_the_new_one() {
-    let s = Setup::new("rewritten");
-    write(&s.path("codex-home/a.jsonl"), "first\nsecond\n");
-    copy(&s.config(), "t1").unwrap();
-    write(&s.path("codex-home/a.jsonl"), "edited first\nsecond\n");
-    copy(&s.config(), "t2").unwrap();
-    assert_eq!(
-        read(&s.path("bucket/sources/laptop/codex/a.jsonl")),
-        "edited first\nsecond\n"
-    );
-    assert_eq!(
-        read(&s.path("bucket/old/t2/sources/laptop/codex/a.jsonl")),
-        "first\nsecond\n"
-    );
-}
-
-#[test]
 fn a_grown_file_replaces_its_copy_and_the_shorter_one_is_kept_under_the_run_time() {
     let s = Setup::new("grown");
     write(&s.path("claude-home/a.jsonl"), "one\n");

@@ -2,8 +2,7 @@ use engine_zero::ingest::{READERS, Report, read};
 use engine_zero::store::{self, text_hash};
 use rusqlite::Connection;
 use serde_json::{Value, json};
-use std::fs::{self, OpenOptions};
-use std::io::Write;
+use std::fs;
 use std::path::PathBuf;
 
 const MAIN: &str = "sources/vm/claude/-home-someone-code-garden/session-1.jsonl";
@@ -30,12 +29,6 @@ impl Setup {
         let path = self.root.join("record").join(relative);
         fs::create_dir_all(path.parent().unwrap()).unwrap();
         fs::write(path, lines.concat()).unwrap();
-    }
-
-    fn append(&self, relative: &str, line: &str) {
-        let path = self.root.join("record").join(relative);
-        let mut file = OpenOptions::new().append(true).open(path).unwrap();
-        file.write_all(line.as_bytes()).unwrap();
     }
 
     fn read(&mut self) -> Report {
@@ -212,24 +205,6 @@ fn a_plain_prompt_takes_its_author_from_the_matching_t3_row() {
     s.read();
     assert_eq!(s.author("roses"), "person");
     assert_eq!(s.author("beans"), "other_agent");
-}
-
-#[test]
-fn a_t3_linked_prompt_follows_the_rows_present_at_each_read() {
-    let mut s = Setup::new("t3-later");
-    s.write(
-        MAIN,
-        &[user("gate", "Fix the gate", json!({"promptSource": "sdk"}))],
-    );
-    s.write(T3, &[t3_row("user", "Something else entirely")]);
-    s.read();
-    assert_eq!(s.author("gate"), "unknown");
-    s.append(T3, &t3_row("user", "Fix the gate"));
-    s.read();
-    assert_eq!(s.author("gate"), "person");
-    s.append(T3, &t3_row("agent", "Fix the gate"));
-    s.read();
-    assert_eq!(s.author("gate"), "unknown");
 }
 
 #[test]

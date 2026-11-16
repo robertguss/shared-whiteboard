@@ -7,8 +7,17 @@ use std::collections::BTreeSet;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::Path;
+use std::sync::LazyLock;
 
-pub const KINDS: [&str; 4] = ["proposal", "judgement", "recall", "context_correction"];
+const KINDS: [&str; 4] = ["proposal", "judgement", "recall", "context_correction"];
+
+static TIME: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$").unwrap()
+});
+
+pub fn known_kind(event: &Value) -> bool {
+    KINDS.contains(&event["kind"].as_str().unwrap_or_default())
+}
 
 pub fn identity(connection: &Value) -> Option<String> {
     let quotes = connection["quotes"].as_array().into_iter().flatten();
@@ -19,14 +28,14 @@ pub fn identity(connection: &Value) -> Option<String> {
 }
 
 pub fn append(db: &mut Connection, record: &Path, machine: &str, event: &Value) -> Result<()> {
-    if !KINDS.contains(&event["kind"].as_str().unwrap_or_default()) {
+    if !known_kind(event) {
         return Err(format!("event has an unknown kind: {}", event["kind"]).into());
     }
     if !event["writer"].is_object() {
         return Err("event has no writer".into());
     }
     let time = event["time"].as_str().unwrap_or_default();
-    if !Regex::new(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$")?.is_match(time) {
+    if !TIME.is_match(time) {
         return Err(format!("event time {time:?} is not YYYY-MM-DDTHH:MM:SSZ").into());
     }
     let folder = record.join("events").join(machine);
