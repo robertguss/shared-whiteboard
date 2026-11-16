@@ -285,6 +285,7 @@ fn each_proposal_is_kept_merged_dropped_or_reported_malformed_by_the_fixed_rules
     );
 
     assert!(s.events("judgement").is_empty());
+    assert!(s.events("recall").is_empty());
     let proposals = s.events("proposal");
     assert_eq!(proposals.len(), 3);
     let first = &proposals[0];

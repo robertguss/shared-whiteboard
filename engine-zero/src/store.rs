@@ -1,6 +1,6 @@
 use crate::Result;
 use crate::mask::mask;
-use rusqlite::{Connection, OptionalExtension, Row, params};
+use rusqlite::{Connection, OptionalExtension, params};
 use sha2::{Digest, Sha256};
 use std::path::Path;
 
@@ -70,11 +70,6 @@ UPDATE items SET author = coalesce((
   HAVING count(*) > 0), fallback_author)
 WHERE prompt";
 
-const SEARCH: &str = "
-SELECT items.key, tool, session_id, author, time, cwd, repo_url, items.text, file, line, prompt, fallback_author
-FROM items_fts JOIN items ON items.id = items_fts.rowid
-WHERE items_fts MATCH ?1 ORDER BY rank LIMIT ?2";
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Author {
     Person,
@@ -85,14 +80,6 @@ pub enum Author {
 }
 
 impl Author {
-    const ALL: [Author; 5] = [
-        Author::Person,
-        Author::Agent,
-        Author::OtherAgent,
-        Author::Tool,
-        Author::Unknown,
-    ];
-
     pub fn as_str(self) -> &'static str {
         match self {
             Author::Person => "person",
@@ -101,13 +88,6 @@ impl Author {
             Author::Tool => "tool",
             Author::Unknown => "unknown",
         }
-    }
-
-    fn parse(name: &str) -> Author {
-        Author::ALL
-            .into_iter()
-            .find(|author| author.as_str() == name)
-            .unwrap_or(Author::Unknown)
     }
 }
 
@@ -220,28 +200,4 @@ pub fn settle_authors(db: &Connection) -> Result<()> {
 
 pub fn count_items(db: &Connection) -> Result<i64> {
     Ok(db.query_row("SELECT count(*) FROM items", [], |row| row.get(0))?)
-}
-
-pub fn search(db: &Connection, query: &str, limit: usize) -> Result<Vec<Item>> {
-    let mut statement = db.prepare(SEARCH)?;
-    let items = statement.query_map(params![query, limit as i64], item)?;
-    Ok(items.collect::<rusqlite::Result<_>>()?)
-}
-
-fn item(row: &Row) -> rusqlite::Result<Item> {
-    Ok(Item {
-        key: row.get(0)?,
-        tool: row.get(1)?,
-        session_id: row.get(2)?,
-        author: Author::parse(&row.get::<_, String>(3)?),
-        time: row.get(4)?,
-        cwd: row.get(5)?,
-        repo_url: row.get(6)?,
-        text: row.get(7)?,
-        file: row.get(8)?,
-        line: row.get(9)?,
-        prompt: row.get(10)?,
-        fallback_author: Author::parse(&row.get::<_, String>(11)?),
-        also_sent_as: None,
-    })
 }

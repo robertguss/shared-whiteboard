@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use engine_zero::{config::Config, context, copy, ingest, page, propose, store};
+use engine_zero::{ask, config::Config, context, copy, ingest, page, propose, store};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -13,6 +13,11 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    Ask {
+        words: Vec<String>,
+        #[arg(long)]
+        caller: Option<String>,
+    },
     Candidates {
         #[arg(long)]
         from: Option<String>,
@@ -54,6 +59,13 @@ fn main() -> ExitCode {
             .join(".config/engine-zero/config.json")
     });
     let result = Config::load(&path).and_then(|config| match cli.command {
+        Command::Ask { words, caller } => store::open(&config.database)
+            .and_then(|mut db| {
+                let caller = caller.unwrap_or_default();
+                let (record, machine) = (&config.record_folder, &config.machine);
+                ask::ask(&mut db, record, machine, &caller, &words.join(" "))
+            })
+            .map(|lines| lines.iter().for_each(|line| println!("{line}"))),
         Command::Candidates { from } => store::open(&config.database)
             .and_then(|db| propose::candidates(&db, from.as_deref()))
             .map(|lines| lines.iter().for_each(|line| println!("{line}"))),

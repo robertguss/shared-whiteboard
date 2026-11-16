@@ -237,19 +237,6 @@ fn an_api_key_is_stored_masked_and_the_source_file_is_unchanged() {
 }
 
 #[test]
-fn a_word_in_a_stored_item_is_found_by_full_text_search() {
-    let mut s = Setup::new("search");
-    s.write(
-        CLAUDE,
-        &(message("g", "the giraffe drinks") + &message("h", "an elephant sleeps")),
-    );
-    s.read();
-    let found = store::search(&s.db, "giraffe", 10).unwrap();
-    let keys: Vec<&str> = found.iter().map(|item| item.key.as_str()).collect();
-    assert_eq!(keys, ["g"]);
-}
-
-#[test]
 fn prompt_authors_follow_the_t3_rows_present_at_each_read() {
     let mut s = Setup::new("authors");
     s.write(
