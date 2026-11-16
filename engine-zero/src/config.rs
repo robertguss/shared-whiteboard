@@ -11,6 +11,7 @@ pub struct Config {
     pub t3_database: PathBuf,
     pub record_folder: PathBuf,
     pub database: PathBuf,
+    pub proposals_folder: Option<PathBuf>,
     #[serde(default)]
     pub project_parents: Vec<String>,
     #[serde(default)]
@@ -26,7 +27,8 @@ impl Config {
             return Err("config needs a machine name without '/'".into());
         }
         let repository = real(&Path::new(env!("CARGO_MANIFEST_DIR")).join(".."));
-        for path in [&config.record_folder, &config.database] {
+        let private = [&config.record_folder, &config.database];
+        for path in private.into_iter().chain(&config.proposals_folder) {
             if real(&std::path::absolute(path)?).starts_with(&repository) {
                 return Err(format!(
                     "{} is inside the repository {}; private files must live outside it",

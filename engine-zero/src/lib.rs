@@ -6,6 +6,7 @@ pub mod copy;
 pub mod events;
 pub mod ingest;
 pub mod mask;
+pub mod propose;
 pub mod store;
 pub mod t3;
 

@@ -31,6 +31,7 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
   "t3_database": "/home/you/.t3/userdata/statev2.sqlite",
   "record_folder": "/home/you/.local/share/engine-zero/record",
   "database": "/home/you/.local/share/engine-zero/engine.sqlite",
+  "proposals_folder": "/home/you/.local/share/engine-zero/proposals",
   "project_parents": ["/home/you/code", "/Users/you/Projects"],
   "temporary_prefixes": ["/tmp", "/private/var/folders"]
 }
@@ -40,7 +41,7 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
 - `remote` is anything rclone accepts as a destination, such as `r2:bucket-name` or a local folder.
 - `sources` maps a tool name to its session folder. List only the tools installed on that machine.
 - `t3_database` is skipped when the file does not exist.
-- `record_folder` and `database` must be outside this repository; the program refuses to run otherwise.
+- `record_folder`, `database` and `proposals_folder` must be outside this repository; the program refuses to run otherwise. Only `propose` needs `proposals_folder`.
 - `project_parents` lists folders whose every direct child is a project, such as `~/code`. `temporary_prefixes` lists folders whose sessions are never a project. Both default to empty and should hold both machines' paths, since sessions from either machine are read on each; they are compared as path text, never looked up on disk.
 
 ## Commands
@@ -49,7 +50,16 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
 - `engine-zero pull` copies `sources/` and `events/` from the bucket into the record folder, leaves `old/` out, and never replaces this machine's own event files; it only restores a missing one.
 - `engine-zero read` reads what is new in the record folder's `.jsonl` files into the database, which it creates on first use. Each file resumes where the last read stopped, a last line without a newline waits for a later read, and a file that became shorter is read again from the start. Secrets are masked in what is stored; the record files are never changed. At the end of every read, the author of each prompt is worked out again from the T3 extract, and so is the context of every item. The first of these that applies gives the context: a correction from `context set`; a worktree path `…/.t3/worktrees/<repo>/…` or `…/<repo>/.claude/worktrees/…`; the longest project root holding the working directory (T3 Code's project roots except its scratch root and roots under a temporary prefix, plus each child of a project parent); the last segment of Codex's repository URL; the session itself (`session:<id>`) for any other working directory. An item with no working directory and no repository URL has no context. It prints how many items were added, how many broken lines were skipped, and, for each tool, how many records were stored and skipped by record type. The database can be deleted at any time; the next `read` builds it again.
 - `engine-zero context set <prefix> <name> --caller <who>` names the context of every item whose working directory is `<prefix>` or under it. The longest matching prefix wins, and a later correction for the same prefix replaces an earlier one. It records the correction as an event, works out contexts again, then copies `<record_folder>/events/<machine>/` to the bucket. If that copy fails it says so and exits with an error; the correction stays in the local event file and the database.
+- `engine-zero propose <file> --caller <who>` checks each proposed connection in `<file>`, which must lie inside `proposals_folder` (a path that resolves elsewhere, through `..` or a link, is refused before it is read). It applies these rules in order: drop when the kind is not one of the six link kinds in `wiki/hand-run-test.md`; drop when a quote is not found in the item its key names (runs of whitespace compare as one space, and an empty quote is never found); drop when fewer than two quotes come from items the person wrote that carry a time; count once a quote that contains another counted quote or is contained in one; drop when the counted quotes come from fewer than two contexts, where an item with no context counts toward none; drop when a connection with the same kind and items has been judged; merge when one is already waiting; otherwise keep it by writing a proposal event, which records the caller. It prints one line per entry: its line number and `kept`, `merged`, `dropped: <reason>` or `malformed: <why>`. Blank lines are skipped, and it fails only when the file cannot be read.
 - `engine-zero rebuild` deletes the database and runs `read`, which builds it again from the record folder's session files and event files under `events/<machine>/<YYYY-MM>.jsonl`.
+
+### The proposals file
+
+One JSON object per line. `kind`, `statement` and `quotes` are required; each quote names an item by its key and gives the exact text quoted from it. `origin` is an optional label stored in the event.
+
+```json
+{"kind": "Same mechanism in unrelated domains", "statement": "Both beds and the pond fail when one thing hogs the light", "quotes": [{"key": "claude:rose-1", "text": "The roses need more sun than the beans do"}, {"key": "codex:pond-7:12", "text": "the lilies shade out the whole pond"}], "origin": "evening pass"}
+```
 
 ## Daily schedule
 

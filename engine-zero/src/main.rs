@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use engine_zero::{config::Config, context, copy, ingest};
+use engine_zero::{config::Config, context, copy, ingest, propose};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -18,6 +18,11 @@ enum Command {
         action: ContextAction,
     },
     Copy,
+    Propose {
+        file: PathBuf,
+        #[arg(long)]
+        caller: String,
+    },
     Pull,
     Read,
     Rebuild,
@@ -49,6 +54,7 @@ fn main() -> ExitCode {
                 },
         } => context::set(&config, &prefix, &name, &caller),
         Command::Copy => copy::stamp_now().and_then(|stamp| copy::copy(&config, &stamp)),
+        Command::Propose { file, caller } => propose::run(&config, &file, &caller),
         Command::Pull => copy::pull(&config),
         Command::Read => ingest::run(&config),
         Command::Rebuild => ingest::rebuild(&config),
