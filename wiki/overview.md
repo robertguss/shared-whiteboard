@@ -1,13 +1,13 @@
 ---
 type: overview
 updated: 2026-11-16
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sessions/2026-11-16-plan-review.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
 **What this is:** a database that acts as an external form of one person's brain, across all their projects and ideas, which AI agents can read, understand and add to. The agent makes or proposes connections the person would not see unaided. Visual views show the same data as a board, a timeline and a status view.
 
-**Where it stands:** the first engine has a requirements plan, [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md). The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it. Nothing is built.
+**Where it stands:** the first engine has a requirements plan, [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md), reviewed by six reviewers and a council of three models and changed after it. The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it. Nothing is built.
 
 **What it is not:** a "second brain" or a personal knowledge management tool. Robert sees the overlap and wants something bigger and deeper than linked notes.
 
@@ -33,6 +33,10 @@ One person's projects and ideas overlap and inform one another. There is no sing
 | The project writes its own reader for session files. cass is neither a dependency nor a fork. | Decided by Robert |
 | The first engine is written in Rust. | Decided by Robert |
 | The first engine has no board. Robert judges connections on a plain page. | Decided by Robert, on the agent's proposal |
+| The first milestone is the copy, the reader, the page, and Robert judging the hand-run connections. | Decided by Robert, on the agent's proposal |
+| The first reader stores messages only. Decisions, attempts and stances wait. | Decided by Robert, on the agent's proposal |
+| Secrets are masked in what the engine stores. The bucket copy stays raw. | Decided by Robert, on the agent's proposal |
+| Agents asking the engine stays in the first version and is built last. | Decided by Robert, on the agent's proposal |
 | Brain-like memory for an agent alone is crowded; memory for a person and an agent thinking together is open. | Proposed, from one research pass |
 | The storage core is part of the research, because its design may influence the memory and association layer. | Decided by Robert |
 | It covers all of Robert's projects and ideas in one place. Mo is one part of it. | Decided by Robert |

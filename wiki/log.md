@@ -81,3 +81,7 @@ Robert decided the project writes its own reader for agent session files, so tha
 ## [2026-11-16] decision | Scope confirmed, Rust, requirements plan written
 
 Robert confirmed the scope of the first engine and chose Rust. Wrote the requirements plan: `docs/plans/2026-11-16-0113-feat-engine-zero-plan.md`. Record: `raw/sessions/2026-11-16-scope-confirmed-rust.md`.
+
+## [2026-11-16] decision | Plan reviewed and changed
+
+At Robert's request, six reviewers and a council of three models reviewed the requirements plan. All three council members: ready after named changes. Robert chose to apply the eleven fixes and the agent's recommendation on four decisions: judge the hand-run connections first, a reader of messages only, masked secrets in the engine, and agent asking built last. Record: `raw/sessions/2026-11-16-plan-review.md`. No second review round was run.
