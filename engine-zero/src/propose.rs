@@ -23,6 +23,10 @@ const JUDGED: &str = "SELECT EXISTS (SELECT 1 FROM holding_judgements WHERE conn
 const WAITING: &str =
     "SELECT EXISTS (SELECT 1 FROM events WHERE kind = 'proposal' AND connection = ?1)";
 
+const CANDIDATES: &str = "
+SELECT key, time, context, text FROM items
+WHERE author = 'person' AND (?1 IS NULL OR time >= ?1) ORDER BY time, file, line";
+
 #[derive(Deserialize)]
 struct Proposal {
     kind: String,
@@ -83,6 +87,16 @@ pub fn run(config: &Config, file: &Path, caller: &str) -> Result<()> {
         println!("{outcome}");
     }
     Ok(())
+}
+
+pub fn candidates(db: &Connection, from: Option<&str>) -> Result<Vec<String>> {
+    let mut statement = db.prepare(CANDIDATES)?;
+    let lines = statement.query_map([from], |row| {
+        let item = json!({"key": row.get::<_, String>(0)?, "time": row.get::<_, Option<String>>(1)?,
+            "context": row.get::<_, Option<String>>(2)?, "text": row.get::<_, String>(3)?});
+        Ok(item.to_string())
+    })?;
+    Ok(lines.collect::<rusqlite::Result<_>>()?)
 }
 
 pub fn check(

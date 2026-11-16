@@ -13,6 +13,10 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    Candidates {
+        #[arg(long)]
+        from: Option<String>,
+    },
     Context {
         #[command(subcommand)]
         action: ContextAction,
@@ -50,6 +54,9 @@ fn main() -> ExitCode {
             .join(".config/engine-zero/config.json")
     });
     let result = Config::load(&path).and_then(|config| match cli.command {
+        Command::Candidates { from } => store::open(&config.database)
+            .and_then(|db| propose::candidates(&db, from.as_deref()))
+            .map(|lines| lines.iter().for_each(|line| println!("{line}"))),
         Command::Context {
             action:
                 ContextAction::Set {

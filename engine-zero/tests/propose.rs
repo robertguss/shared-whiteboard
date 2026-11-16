@@ -1,6 +1,6 @@
 use engine_zero::events::append;
 use engine_zero::ingest::{READERS, read};
-use engine_zero::propose::check;
+use engine_zero::propose::{candidates, check};
 use engine_zero::store;
 use rusqlite::Connection;
 use serde_json::{Value, json};
@@ -338,6 +338,57 @@ fn a_waiting_connection_is_merged_and_a_judged_one_is_dropped_with_any_mark_also
     s.rebuild();
     assert_eq!(s.check(&lines), expected);
     assert_eq!(s.events("proposal").len(), 3);
+}
+
+#[test]
+fn candidates_lists_the_persons_items_oldest_first_masked_and_writes_nothing() {
+    let mut s = Setup::new("candidates");
+    let record = s.root.join("record");
+    write(
+        &record.join("sources/laptop/claude/shed/shed.jsonl"),
+        &[line(
+            json!({"type": "user", "uuid": "lock", "sessionId": "shed", "promptSource": "typed",
+            "timestamp": "2026-10-30T09:00:00.000Z", "cwd": "/home/someone/code/shed",
+            "message": {"role": "user", "content": "The shed key is sk-FAKEFAKEFAKEFAKEFAKEFAKE"}}),
+        )],
+    );
+    let parents = ["/home/someone/code".to_string()];
+    read(&mut s.db, &record, READERS, &parents, &[]).unwrap();
+    let changes = s.db.total_changes();
+
+    let lines = |from| -> Vec<Value> {
+        candidates(&s.db, from)
+            .unwrap()
+            .iter()
+            .map(|line| serde_json::from_str(line).unwrap())
+            .collect()
+    };
+    let keys = |items: &[Value]| -> Vec<String> {
+        items
+            .iter()
+            .map(|item| item["key"].as_str().unwrap().replace("claude:", ""))
+            .collect()
+    };
+    let all = lines(None);
+    let order = [
+        "undated", "lock", "hens", "rose", "bean", "pump", "pasted", "maze", "trellis", "winter",
+    ];
+    assert_eq!(keys(&all), order);
+    assert_eq!(
+        all[1],
+        json!({"key": "claude:lock", "time": "2026-10-30T09:00:00.000Z", "context": "shed",
+            "text": "The shed key is [masked]"})
+    );
+    assert_eq!(all[2]["context"], Value::Null);
+    assert_eq!(keys(&lines(Some("2026-10-30"))), order[1..]);
+    assert_eq!(keys(&lines(Some("2026-11-02"))), order[2..]);
+
+    assert_eq!(s.db.total_changes(), changes);
+    let events: i64 =
+        s.db.query_row("SELECT count(*) FROM events", [], |row| row.get(0))
+            .unwrap();
+    assert_eq!(events, 0);
+    assert!(!record.join("events").exists());
 }
 
 struct Cli {
