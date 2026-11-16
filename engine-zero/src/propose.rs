@@ -20,8 +20,7 @@ SELECT author = 'person' AND time IS NOT NULL, context, text, file, line FROM it
 
 const JUDGED: &str = "SELECT EXISTS (SELECT 1 FROM holding_judgements WHERE connection = ?1)";
 
-const WAITING: &str =
-    "SELECT EXISTS (SELECT 1 FROM events WHERE kind = 'proposal' AND connection = ?1)";
+const WAITING: &str = "SELECT EXISTS (SELECT 1 FROM waiting_proposals WHERE connection = ?1)";
 
 const CANDIDATES: &str = "
 SELECT key, time, context, text FROM items

@@ -38,6 +38,10 @@ SELECT file, line, time, connection, body FROM (
   SELECT *, row_number() OVER (PARTITION BY connection ORDER BY time DESC, file DESC, line DESC) AS rank
   FROM events WHERE kind = 'judgement' AND connection IS NOT NULL)
 WHERE rank = 1;
+CREATE INDEX IF NOT EXISTS events_connection ON events (connection) WHERE connection IS NOT NULL;
+CREATE VIEW IF NOT EXISTS waiting_proposals AS
+SELECT file, line, time, connection, body FROM events
+WHERE kind = 'proposal' AND connection NOT IN (SELECT connection FROM holding_judgements);
 ";
 
 const INSERT_ITEM: &str = "

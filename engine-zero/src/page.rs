@@ -16,13 +16,11 @@ const WAITING: &str = "
 SELECT file, line, body FROM (
   SELECT file, line, time, body,
     row_number() OVER (PARTITION BY connection ORDER BY time, file, line) AS rank
-  FROM events WHERE kind = 'proposal'
-    AND connection NOT IN (SELECT connection FROM holding_judgements))
+  FROM waiting_proposals)
 WHERE rank = 1";
 
 const PROPOSAL: &str = "
-SELECT body FROM events WHERE kind = 'proposal' AND file = ?1 AND line = ?2
-  AND connection NOT IN (SELECT connection FROM holding_judgements)";
+SELECT body FROM waiting_proposals WHERE file = ?1 AND line = ?2";
 
 const ITEM: &str = "SELECT context, substr(time, 1, 10) FROM items WHERE key = ?1";
 
