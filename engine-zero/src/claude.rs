@@ -2,7 +2,13 @@ use crate::ingest::{Outcome, Place};
 use crate::store::{Author, Item};
 use serde_json::Value;
 
-const TOOL_WRAPPERS: [&str; 2] = ["<task-notification>", "<local-command-stdout>"];
+const TOOL_WRAPPERS: [&str; 5] = [
+    "<task-notification>",
+    "<local-command-stdout>",
+    "<local-command-stderr>",
+    "<bash-stdout>",
+    "<bash-stderr>",
+];
 const COMMAND_WRAPPERS: [&str; 2] = ["<command-message>", "<command-name>"];
 const INTERRUPTED: &str = "[Request interrupted by user";
 

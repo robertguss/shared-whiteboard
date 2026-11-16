@@ -129,14 +129,22 @@ fn a_command_output_wrapper_with_a_human_marker_is_a_tools() {
     let mut s = Setup::new("command-output");
     s.write(
         MAIN,
-        &[user(
-            "stdout",
-            "<local-command-stdout>Compost turned</local-command-stdout>",
-            json!({"promptSource": "typed", "origin": {"kind": "human"}}),
-        )],
+        &[
+            user(
+                "stdout",
+                "<local-command-stdout>Compost turned</local-command-stdout>",
+                json!({"promptSource": "typed", "origin": {"kind": "human"}}),
+            ),
+            user(
+                "bash",
+                "<bash-stdout>3 beds</bash-stdout><bash-stderr></bash-stderr>",
+                json!({"promptSource": "typed", "origin": {"kind": "human"}}),
+            ),
+        ],
     );
     s.read();
     assert_eq!(s.author("stdout"), "tool");
+    assert_eq!(s.author("bash"), "tool");
 }
 
 #[test]
