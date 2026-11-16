@@ -2,7 +2,7 @@ use crate::Result;
 use crate::config::Config;
 use crate::store::{self, Item};
 use crate::{claude, codex, context, events};
-use rusqlite::Connection;
+use rusqlite::{Connection, TransactionBehavior};
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fmt;
@@ -107,7 +107,7 @@ pub fn read_path(
 ) -> Result<()> {
     let file = path.strip_prefix(record)?.to_string_lossy().into_owned();
     if let Some((tree, handler)) = handler(&file, readers) {
-        let tx = db.transaction()?;
+        let tx = db.transaction_with_behavior(TransactionBehavior::Immediate)?;
         read_file(&tx, path, &file, tree, handler, report)?;
         tx.commit()?;
     }

@@ -6,17 +6,18 @@ use std::process::Command;
 
 pub fn copy(config: &Config, stamp: &str) -> Result<()> {
     let machine = &config.machine;
-    for (tool, folder) in &config.sources {
-        up(config, stamp, folder, &format!("sources/{machine}/{tool}"))?;
-    }
     let t3 = format!("sources/{machine}/t3");
     let local = config.record_folder.join(&t3);
-    let extracted = t3::extract(&config.t3_database, &local);
-    if local.exists() {
-        up(config, stamp, &local, &t3)?;
+    let mut results = vec![t3::extract(&config.t3_database, &local)];
+    for (tool, folder) in &config.sources {
+        let path = format!("sources/{machine}/{tool}");
+        results.push(up(config, stamp, folder, &path));
     }
-    copy_events(config, stamp)?;
-    extracted
+    if local.exists() {
+        results.push(up(config, stamp, &local, &t3));
+    }
+    results.push(copy_events(config, stamp));
+    results.into_iter().collect()
 }
 
 pub fn copy_events(config: &Config, stamp: &str) -> Result<()> {
@@ -38,10 +39,14 @@ fn up(config: &Config, stamp: &str, local: &Path, path: &str) -> Result<()> {
 pub fn pull(config: &Config) -> Result<()> {
     let remote = config.remote.trim_end_matches('/');
     let record = &config.record_folder;
-    let own = format!("/events/{}/**", config.machine);
+    let machine = &config.machine;
+    let events = format!("/events/{machine}/**");
+    let t3 = format!("/sources/{machine}/t3/**");
     let others = [
         "--filter",
-        &format!("- {own}"),
+        &format!("- {events}"),
+        "--filter",
+        &format!("- {t3}"),
         "--filter",
         "+ /sources/**",
         "--filter",
@@ -50,7 +55,8 @@ pub fn pull(config: &Config) -> Result<()> {
         "- *",
     ];
     rclone(remote, record, &others)?;
-    rclone(remote, record, &["--include", &own, "--ignore-existing"])
+    let own = ["--include", &events, "--include", &t3, "--ignore-existing"];
+    rclone(remote, record, &own)
 }
 
 pub fn stamp_now() -> Result<String> {

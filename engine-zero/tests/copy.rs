@@ -201,6 +201,37 @@ fn pull_never_replaces_this_machines_event_file_and_restores_a_missing_one() {
 }
 
 #[test]
+fn pull_never_replaces_this_machines_t3_extract_and_restores_a_missing_one() {
+    let s = Setup::new("pull-own-t3");
+    write(&s.path("bucket/sources/laptop/t3/messages.jsonl"), "old\n");
+    write(&s.path("bucket/sources/laptop/t3/projects.jsonl"), "p\n");
+    write(
+        &s.path("record/sources/laptop/t3/messages.jsonl"),
+        "old\nnew\n",
+    );
+    pull(&s.config()).unwrap();
+    assert_eq!(
+        read(&s.path("record/sources/laptop/t3/messages.jsonl")),
+        "old\nnew\n"
+    );
+    assert_eq!(
+        read(&s.path("record/sources/laptop/t3/projects.jsonl")),
+        "p\n"
+    );
+}
+
+#[test]
+fn a_missing_source_folder_fails_the_copy_after_everything_else_is_copied() {
+    let s = Setup::new("missing-source");
+    fs::remove_dir_all(s.path("claude-home")).unwrap();
+    write(&s.path("codex-home/b.jsonl"), "b\n");
+    write(&s.path("record/events/laptop/2026-01.jsonl"), "{}\n");
+    assert!(copy(&s.config(), "t1").is_err());
+    assert_eq!(read(&s.path("bucket/sources/laptop/codex/b.jsonl")), "b\n");
+    assert_eq!(read(&s.path("bucket/events/laptop/2026-01.jsonl")), "{}\n");
+}
+
+#[test]
 fn pull_succeeds_when_the_bucket_holds_no_events_yet() {
     let s = Setup::new("pull-no-events");
     write(&s.path("bucket/sources/laptop/claude/a.jsonl"), "a\n");

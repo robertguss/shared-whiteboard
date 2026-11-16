@@ -44,8 +44,11 @@ fn reply(status: u16, body: String) -> Reply {
 }
 
 pub fn run(config: &Config, port: u16) -> Result<()> {
-    let mut db = store::open(&config.database)?;
-    let secret: String = db.query_row("SELECT lower(hex(randomblob(16)))", [], |row| row.get(0))?;
+    let secret: String = Connection::open_in_memory()?.query_row(
+        "SELECT lower(hex(randomblob(16)))",
+        [],
+        |row| row.get(0),
+    )?;
     let server = Server::http(("0.0.0.0", port))
         .map_err(|e| format!("cannot listen on port {port}: {e}"))?;
     println!("/?key={secret}");
@@ -59,16 +62,19 @@ pub fn run(config: &Config, port: u16) -> Result<()> {
         let _ = request.as_reader().take(1 << 16).read_to_string(&mut body);
         let method = request.method().as_str().to_string();
         let url = request.url().to_string();
-        let answer = handle(
-            &mut db,
-            config,
-            &secret,
-            &method,
-            &url,
-            user.as_deref(),
-            &body,
-        )
-        .unwrap_or_else(|e| reply(500, escape(&e.to_string())));
+        let answer = store::open(&config.database)
+            .and_then(|mut db| {
+                handle(
+                    &mut db,
+                    config,
+                    &secret,
+                    &method,
+                    &url,
+                    user.as_deref(),
+                    &body,
+                )
+            })
+            .unwrap_or_else(|e| reply(500, escape(&e.to_string())));
         let mut response = Response::from_string(answer.body)
             .with_status_code(answer.status)
             .with_header(header("Content-Type", "text/html; charset=utf-8"));

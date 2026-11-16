@@ -271,3 +271,17 @@ fn the_later_judgement_of_one_connection_holds() {
         ]
     );
 }
+
+#[test]
+fn an_event_appended_while_another_command_holds_the_database_waits_and_is_stored() {
+    let mut s = Setup::new("busy");
+    let other = Connection::open(s.root.join("engine.sqlite")).unwrap();
+    other.execute_batch("BEGIN IMMEDIATE").unwrap();
+    let writer = std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(300));
+        other.execute_batch("COMMIT").unwrap();
+    });
+    s.append(&recall("2026-11-03T00:00:00Z", "beds")).unwrap();
+    writer.join().unwrap();
+    assert_eq!(s.texts("SELECT kind FROM events"), ["recall"]);
+}

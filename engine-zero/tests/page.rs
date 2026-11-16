@@ -303,8 +303,8 @@ fn exchange(port: u16, request: &str) -> String {
 }
 
 #[test]
-fn page_serves_the_page_and_takes_a_mark_over_a_real_socket() {
-    let s = Setup::new("socket");
+fn page_follows_a_rebuild_and_takes_a_mark_over_a_real_socket() {
+    let mut s = Setup::new("socket");
     let file = s.root.join("config.json");
     fs::write(&file, s.config.to_string()).unwrap();
     let port = TcpListener::bind("127.0.0.1:0")
@@ -327,10 +327,17 @@ fn page_serves_the_page_and_takes_a_mark_over_a_real_socket() {
     assert_eq!(secret.len(), 32);
     assert!(secret.chars().all(|c| c.is_ascii_hexdigit()));
 
-    let page = exchange(
-        port,
-        &format!("GET /?key={secret} HTTP/1.1\r\nHost: garden\r\nConnection: close\r\n\r\n"),
-    );
+    let get = format!("GET /?key={secret} HTTP/1.1\r\nHost: garden\r\nConnection: close\r\n\r\n");
+    fs::remove_file(s.root.join("engine.sqlite")).unwrap();
+    assert!(exchange(port, &get).contains("Nothing is waiting."));
+    let rebuilt = Command::new(env!("CARGO_BIN_EXE_engine-zero"))
+        .args(["--config", file.to_str().unwrap(), "rebuild"])
+        .output()
+        .unwrap();
+    assert!(rebuilt.status.success());
+    s.db = store::open(&s.root.join("engine.sqlite")).unwrap();
+
+    let page = exchange(port, &get);
     assert!(page.starts_with("HTTP/1.1 200"), "{page}");
     assert!(page.contains("Both &lt;em&gt;beds&lt;/em&gt;"));
 
