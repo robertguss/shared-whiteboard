@@ -89,3 +89,7 @@ At Robert's request, six reviewers and a council of three models reviewed the re
 ## [2026-11-16] decision | Implementation plan written and reviewed
 
 Robert chose to write the implementation plan. The agent measured both session formats on the first machine and added fourteen technical decisions, the units, a verification table and a definition of done to the plan. Robert decided that a session with no repository counts as its own context. Two design checks and a five-reviewer review followed; their fixes are in the plan, which now has eleven units. One question is left for Robert: what the first judging does with hand-run connections that have no session quotes. Record: `raw/sessions/2026-11-16-implementation-plan.md`.
+
+## [2026-11-16] session | Engine zero built
+
+Robert chose to start the build. The agent built every code unit of the plan in `engine-zero/`, checked each on the first machine's real data, and ran two simplification passes and a seven-reviewer code review; four confirmed findings are fixed. 18,056 items from 926 sessions are read, 1,092 of them the person's. 23 of the 63 hand-run connections could be quoted from session messages; with 5 planted ones, 28 wait for Robert on the judging page. Added `engine-zero-notes.md`. A local folder stands in for the bucket. Record: `raw/sessions/2026-11-16-engine-zero-built.md`.

@@ -1,13 +1,13 @@
 ---
 type: overview
 updated: 2026-11-16
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sessions/2026-11-16-plan-review.md, raw/sessions/2026-11-16-implementation-plan.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sessions/2026-11-16-plan-review.md, raw/sessions/2026-11-16-implementation-plan.md, raw/sessions/2026-11-16-engine-zero-built.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
 **What this is:** a database that acts as an external form of one person's brain, across all their projects and ideas, which AI agents can read, understand and add to. The agent makes or proposes connections the person would not see unaided. Visual views show the same data as a board, a timeline and a status view.
 
-**Where it stands:** the first engine has a full plan, [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md): requirements, reviewed by six reviewers and a council of three models, and an implementation part of eleven units, reviewed by five reviewers. The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it. Nothing is built.
+**Where it stands:** the first engine, [engine zero](../engine-zero/README.md), is built from its [plan](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md) and runs on the first machine's session files: 18,056 items from 926 sessions. 28 proposed connections wait for Robert to judge, so nothing is known yet about whether the connections are real. See [engine zero notes](engine-zero-notes.md). The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it.
 
 **What it is not:** a "second brain" or a personal knowledge management tool. Robert sees the overlap and wants something bigger and deeper than linked notes.
 
@@ -54,7 +54,7 @@ Details: [the problem](the-problem.md), [requirements](requirements.md), [shape 
 
 ## Next
 
-Build [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md), the copy first. Robert provides the bucket and its credentials, and still has to check whether old session files exist on the second machine and set its retention. One question is open in the plan: what the first judging does with hand-run connections that have no session quotes. The engine research continues beside it.
+Robert judges the 28 waiting connections on the page. After that the agent writes the baseline in [engine zero notes](engine-zero-notes.md) and runs a first real connection pass. Robert provides the bucket and its credentials, and still has to check whether old session files exist on the second machine and set its retention; until then a local folder stands in for the bucket. One question is open in the plan: what to do with hand-run connections that have no session quotes. The engine research continues beside it.
 
 ## An idea to hold
 

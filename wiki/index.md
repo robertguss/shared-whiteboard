@@ -6,12 +6,13 @@ Every page in the wiki. Read [overview](overview.md) first.
 
 | Page | Summary | Updated |
 | --- | --- | --- |
-| [overview](overview.md) | What this project is, what is decided, what is proposed, what is next | 2026-11-15 |
+| [overview](overview.md) | What this project is, what is decided, what is proposed, what is next | 2026-11-16 |
 | [the problem](the-problem.md) | The need that stayed the same, why it keeps coming back, and what follows | 2026-11-15 |
 | [requirements](requirements.md) | What Robert has asked for, traced to their words | 2026-11-15 |
 | [memory model](memory-model.md) | The data under the views, modelled on human memory; proposed | 2026-11-15 |
 | [hand-run test](hand-run-test.md) | What finding connections by hand taught the design: units, links, operations, tests | 2026-11-15 |
 | [open questions](open-questions.md) | Fourteen undecided questions with the agent's lean on each | 2026-11-15 |
+| [engine zero notes](engine-zero-notes.md) | First-run numbers, the first judging, slow or awkward operations, limits left open | 2026-11-16 |
 
 ## Comparisons
 
@@ -48,6 +49,7 @@ Every page in the wiki. Read [overview](overview.md) first.
 | [scope confirmed, Rust](../raw/sessions/2026-11-16-scope-confirmed-rust.md) | Robert confirms the scope of the first engine and chooses Rust, 16 November 2026 |
 | [the plan is reviewed](../raw/sessions/2026-11-16-plan-review.md) | Six reviewers and a three-model council review the plan; eleven fixes and four decisions, 16 November 2026 |
 | [the implementation plan](../raw/sessions/2026-11-16-implementation-plan.md) | Session formats measured, the implementation part written and reviewed, scratch sessions decided, 16 November 2026 |
+| [engine zero is built](../raw/sessions/2026-11-16-engine-zero-built.md) | Every code unit built and checked on real data, a code review, 28 connections waiting for Robert, 16 November 2026 |
 | [Rieseberg, ambition](../raw/sources/2026-11-15-rieseberg-ambition.md) | Four kinds of ambition when working with models |
 | [TheBrain](../raw/sources/2026-11-15-thebrain.md) | Thoughts, three kinds of link, a focus view |
 | [brain-inspired memory scan](../raw/sources/2026-11-15-brain-inspired-memory-scan.md) | HippoRAG and other agent memory modelled on human memory |
@@ -63,6 +65,12 @@ Every page in the wiki. Read [overview](overview.md) first.
 | Plan | What it covers |
 | --- | --- |
 | [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md) | The plan for the first engine: requirements and eleven implementation units; reviewed on 16 November 2026 |
+
+## Code
+
+| Program | What it does |
+| --- | --- |
+| [engine zero](../engine-zero/README.md) | Copies session files to a bucket, reads them into SQLite, checks proposed connections, serves the judging page, answers questions |
 
 ## Prototypes
 
