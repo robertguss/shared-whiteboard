@@ -1,4 +1,5 @@
 pub mod claude;
+pub mod codex;
 pub mod config;
 pub mod copy;
 pub mod ingest;

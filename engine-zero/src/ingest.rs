@@ -1,18 +1,19 @@
 use crate::Result;
-use crate::claude;
 use crate::config::Config;
 use crate::store::{self, Item};
+use crate::{claude, codex};
 use rusqlite::Connection;
 use serde_json::Value;
 use std::collections::BTreeMap;
 use std::fmt;
 use std::fs::{self, File};
-use std::io::{Read, Seek, SeekFrom};
+use std::io::{BufRead, BufReader, Read, Seek, SeekFrom};
 use std::path::{Path, PathBuf};
 
 pub struct Place<'a> {
     pub file: &'a str,
     pub line: i64,
+    pub head: &'a Value,
 }
 
 pub enum Outcome {
@@ -22,7 +23,7 @@ pub enum Outcome {
 
 pub type Reader = fn(&Value, &Place) -> Outcome;
 
-pub const READERS: &[(&str, Reader)] = &[("claude", claude::read)];
+pub const READERS: &[(&str, Reader)] = &[("claude", claude::read), ("codex", codex::read)];
 
 #[derive(Default)]
 pub struct Counts {
@@ -124,6 +125,9 @@ fn read_file(
         (position, line) = (0, 0);
     }
     let mut bytes = vec![];
+    BufReader::new(&source).read_until(b'\n', &mut bytes)?;
+    let head = serde_json::from_slice(&bytes).unwrap_or(Value::Null);
+    bytes.clear();
     source.seek(SeekFrom::Start(position))?;
     source.take(length - position).read_to_end(&mut bytes)?;
     let complete = bytes.iter().rposition(|&b| b == b'\n').map_or(0, |i| i + 1);
@@ -134,10 +138,15 @@ fn read_file(
             continue;
         };
         let counts = report.trees.entry(tree.to_string()).or_default();
+        let place = Place {
+            file,
+            line,
+            head: &head,
+        };
         match handler {
             Handler::T3Messages => store::insert_t3_message(db, file, line, &value.to_string())?,
             Handler::T3Projects => store::insert_t3_project(db, file, line, &value.to_string())?,
-            Handler::Session(reader) => match reader(&value, &Place { file, line }) {
+            Handler::Session(reader) => match reader(&value, &place) {
                 Outcome::Items(items) => {
                     for item in &items {
                         store::insert_item(db, item)?;
