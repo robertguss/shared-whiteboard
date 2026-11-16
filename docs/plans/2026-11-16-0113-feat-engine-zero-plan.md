@@ -258,11 +258,11 @@ R10, R11 and R16 now speak of contexts, because Robert decided on 16 November 20
 
 - KTD1. **One Rust command-line program beside rclone.** It has no async runtime and no model client. Libraries: `rusqlite` with its bundled SQLite, which has full-text search switched on, `serde_json`, `clap`, `regex`, `sha2` and `tiny_http`. Governs R3, R4.
 - KTD2. **The copy is `rclone copy` with a dated backup folder, called only by the program.** Before rclone overwrites a bucket file it moves the old version into `old/<time>/`, so grown files and rewritten files are both kept without the program comparing content. The program never calls `rclone sync` and never passes a delete flag. Governs R1, R2.
-- KTD3. **The engine reads a local record folder that mirrors the bucket.** The engine machine pulls `sources/` and `events/` from the bucket and reads only that folder, so a rebuild uses exactly what the bucket holds. Governs R3. Layout is under Output Structure.
+- KTD3. **The engine reads a local record folder that mirrors the bucket.** The engine machine pulls `sources/` and `events/` from the bucket and reads only that folder, so a rebuild uses exactly what the bucket holds. A rebuild reads current versions only, not `old/`. `pull` never replaces one of this machine's own event files; it only restores a missing one. Governs R3. Layout is under Output Structure.
 - KTD4. **A small extract of T3 Code's database is copied with the session files.** Neither tool's session file shows whether a person or an agent sent a prompt through T3 Code; T3 Code's `orchestration_v2_projection_messages` table does, in `createdBy`. Each machine appends one row per user-role T3 message to `sources/<machine>/t3/messages.jsonl`: message id, thread id, the provider's session id, `createdBy`, `creationSource`, time, and the SHA-256 of the trimmed text. A second file lists T3 Code's project roots. The extract holds no message text. Governs R5, R16.
-- KTD5. **A message is the person's only on positive evidence.** The evidence is a T3 row with `createdBy: user` whose text hash matches within the linked session, or a terminal session record marked human. Everything else is the agent, another agent, a tool, or unknown. The ordered checks are in the tables under High-Level Technical Design. Governs R5.
-- KTD6. **An item's key comes from the source, not the engine.** Claude Code: `claude:<uuid>`. Codex: `codex:<session id>:<ordinal>`. The file path and line number are stored beside the key as the place. When a key appears twice, the first file wins. Codex fork copies and `compacted` records are skipped. Governs R5, R7, R13.
-- KTD7. **Reading resumes from a byte position per file.** Only complete lines are read. A line that fails to parse is skipped and counted, because Codex has broken lines in the middle of files. The unique key makes a second read add nothing. A file shorter than its saved position is read again from the start. Governs R7.
+- KTD5. **A message is the person's only on positive evidence.** The evidence is a T3 row with `createdBy: user` whose text hash matches within the linked session, or a terminal session record marked human. Everything else is the agent, another agent, a tool, or unknown. The ordered checks are in the tables under High-Level Technical Design. The hash is taken from the raw trimmed text, before masking. When the T3 rows for one hash in a session disagree on `createdBy`, the record is unknown. Unknown prompts in T3-linked sessions are tried again on every read, because a T3 row can arrive after the prompt was read. Governs R5.
+- KTD6. **An item's key comes from the source, not the engine.** Claude Code: `claude:<uuid>`. Codex: `codex:<session id>:<ordinal>`. The key is the source place that R13 and R14 speak of; the file path and line number are stored beside it for lookup, and events hold all three. When a key appears in two files, the file whose path sorts first wins, whatever the reading order. Codex fork copies and `compacted` records are skipped. Governs R5, R7, R13.
+- KTD7. **Reading resumes from a byte position per file.** Only complete lines are read. A line that fails to parse is skipped and counted, because Codex has broken lines in the middle of files. The unique key makes a second read add nothing; an event's key is its file and line. A file shorter than its saved position has its items removed and is read again from the start. Governs R7.
 - KTD8. **The context of an item is decided by an ordered rule.** First match wins:
   1. a correction Robert has recorded for a path prefix;
   2. the last segment of Codex's `git.repository_url`;
@@ -272,17 +272,18 @@ R10, R11 and R16 now speak of contexts, because Robert decided on 16 November 20
   6. any other working directory, which makes the session its own context;
   7. no working directory, which gives unknown.
   Known project roots come from the T3 extract and from the machine's config. Governs R16.
-- KTD9. **The event log is one JSON-lines file per machine per month, and the database derives from it.** Events have four kinds: proposal, judgement, recall and context correction. Writing an event appends a line to `events/<machine>/<YYYY-MM>.jsonl` and then reads it in through the same loop that reads session files. A rebuild is that loop run on an empty database. When one connection has two judgements, the later one holds. Governs R3, R9, R13.
+- KTD9. **The event log is one JSON-lines file per machine per month, and the database derives from it.** Events have four kinds: proposal, judgement, recall and context correction. Writing an event appends a line to `events/<machine>/<YYYY-MM>.jsonl` and then reads it in through the same loop that reads session files. A rebuild is that loop run on an empty database. Every event records what wrote it: the page, or a named command and who called it. When one connection has two judgements, the later one holds. Governs R3, R9, R13.
 - KTD10. **A connection's identity is its kind plus the sorted keys of the items it joins, and the fixed rules run in this order.** Governs R11, R14.
   1. Drop when the kind is not one of the six in `wiki/hand-run-test.md`.
   2. Drop when any quote is not found in its cited item. Runs of whitespace compare as one space.
   3. Drop when fewer than two quotes come from items the person wrote that carry a time.
-  4. Drop when those quotes come from fewer than two contexts. An item with unknown context counts toward none.
-  5. Drop when a connection with the same identity has been judged.
-  6. Merge when a connection with the same identity is already waiting.
-  7. Otherwise keep, by writing a proposal event.
+  4. A quote that contains another counted quote, or is contained in one, counts once. This stops an answer the engine gave, pasted into a new prompt, from pairing with its own source.
+  5. Drop when the counted quotes come from fewer than two contexts. An item with unknown context counts toward none.
+  6. Drop when a connection with the same identity has been judged.
+  7. Merge when a connection with the same identity is already waiting.
+  8. Otherwise keep, by writing a proposal event.
 - KTD11. **A coding agent runs the model step and calls the program.** `candidates` prints the person's messages; the agent restates and proposes in a file; `propose` applies KTD10. The procedure is `engine-zero/passes/connection-pass.md`. The engine sends session text nowhere, so text reaches only the agent Robert starts the pass in. Governs R6, R10, R18.
-- KTD12. **The page is served by the program and reached through exe.dev's private proxy.** It is plain server-rendered HTML with one form per connection and a hidden token made at start. exe.dev serves ports 3000 to 9999 only to people with access to the machine; the port is never set public. Governs R12, R15.
+- KTD12. **The page is served by the program and reached through exe.dev's private proxy.** It is plain server-rendered HTML with one form per connection and a hidden token made at start, which stops a forged form post and protects nothing else. exe.dev serves ports 3000 to 9999 only to people with access to the machine; the port is never set public. Governs R12, R15.
 - KTD13. **Masking runs before anything is stored, with a fixed list of patterns.** Quotes are checked against the masked text, so the event log holds masked text only. The list covers cloud and model-service key shapes, token prefixes, private key blocks, bearer headers, and `password=`-style assignments; gitleaks' default rules are the reference for the shapes. Governs R17.
 - KTD14. **Private files live outside the repository, and the program refuses to run otherwise.** Config is in `~/.config/engine-zero/`, the record folder and database in `~/.local/share/engine-zero/`, and bucket credentials in rclone's own config. Governs R15.
 
@@ -329,10 +330,10 @@ Who wrote a Claude Code record. First match wins.
 | 5 | `user` record with `isMeta` or `isCompactSummary` | Not stored |
 | 6 | File is under `subagents/` | Another agent |
 | 7 | `origin.kind` is `coordinator` or `peer` | Another agent |
-| 8 | T3 row for this session with the same text hash and `createdBy: user` | Person |
-| 9 | T3 row for this session with the same text hash and `createdBy: agent` | Another agent |
-| 10 | `origin.kind: human`, `promptSource: typed` or `turnOrigin: human` | Person |
-| 11 | `origin.kind: task-notification`, or text that opens with a task notification or command output wrapper | Tool |
+| 8 | `origin.kind: task-notification`, or text that opens with a task notification or command output wrapper | Tool |
+| 9 | T3 rows for this session with the same text hash, all `createdBy: user` | Person |
+| 10 | T3 rows for this session with the same text hash, all `createdBy: agent` | Another agent |
+| 11 | `origin.kind: human`, `promptSource: typed` or `turnOrigin: human` | Person |
 | 12 | Anything else | Unknown |
 
 Who wrote a Codex record. First match wins.
@@ -342,8 +343,8 @@ Who wrote a Codex record. First match wins.
 | 1 | `ordinal` below `subagent_history_start_ordinal`, or `metadata.inherited_user_message`, or type `compacted` | Not stored |
 | 2 | `event_msg` `item_completed` with item type `AgentMessage` | Agent |
 | 3 | `response_item` `agent_message` addressed to this session's agent | Another agent |
-| 4 | `item_completed` `UserMessage` with a T3 row: `createdBy: user` | Person |
-| 5 | `item_completed` `UserMessage` with a T3 row: `createdBy: agent` | Another agent |
+| 4 | `item_completed` `UserMessage` with T3 rows of the same text hash, all `createdBy: user` | Person |
+| 5 | `item_completed` `UserMessage` with T3 rows of the same text hash, all `createdBy: agent` | Another agent |
 | 6 | `item_completed` `UserMessage`, no T3 row, `originator` is `codex-tui` | Person |
 | 7 | Any other `item_completed` `UserMessage` | Unknown |
 | 8 | Anything else | Not stored |
@@ -356,10 +357,15 @@ stateDiagram-v2
   Proposed --> Dropped: a fixed rule fails
   Proposed --> Waiting: kept or merged
   Waiting --> Judged: Robert marks it
-  Judged --> Judged: Robert marks it again
   Judged --> [*]
   Dropped --> [*]
 ```
+
+### System-Wide Impact
+
+- **The engine's output comes back as input.** Sessions in which an agent runs a pass or asks a question are later read like any other. Tool results are not stored (A1), an agent's restatement is the agent's (KTD5), and a pasted answer cannot pair with its own source (KTD10).
+- **Agents run as Robert's user.** The program cannot stop an agent on the machine from writing an event file or calling the page. No command writes a judgement, every event records what wrote it (KTD9), and the procedure file tells agents not to write events or call the page.
+- **The author rules depend on T3 Code's private tables.** See Risks.
 
 ### Output Structure
 
@@ -407,6 +413,8 @@ old/<time>/…                      versions rclone moved aside
 | T3 Code changes its database tables. | The extract fails loudly and the file copy still runs. Prompts read meanwhile are unknown, never the person's, and are settled on a later read. |
 | The text-hash match misses a prompt T3 Code or the tool rewrote. On the first machine 28 Claude Code and about 7 Codex prompts matched no row, and 14 typed messages exist only as queue records. | Those are unknown. The count is reported by the reader so the loss is visible. |
 | Masking misses a secret of an unusual shape. | Only the person's and agents' prose is stored, not tool output, where most secrets are. The page and the event log are private. |
+| An agent writes a judgement or a context correction that Robert did not make. | The program cannot prevent it. Events record what wrote them, so such events can be found and set aside. |
+| A session file is rewritten to a longer size, which the reader does not notice. | The copy still keeps the old version in `old/`. No rewrite has been observed. |
 | A wrong rclone command deletes bucket files. | The program is the only caller and has no delete path. The backup folder keeps every overwritten version. |
 | The backup folder grows, because each run keeps the old version of every file that grew. | One run a day. If the cost matters, the write-once design under Scope Boundaries replaces it. |
 | Some hand-run connections drew on repositories, not sessions, and cannot pass KTD10. | They are listed for Robert and not forced onto the page. |
@@ -421,7 +429,7 @@ old/<time>/…                      versions rclone moved aside
 - The link from a T3 thread to a provider session is `orchestration_v2_projection_provider_threads.payload_json.nativeThreadRef.nativeId`. T3 Code's database is `~/.t3/userdata/statev2.sqlite`, opened read-only.
 - rclone's `--backup-dir` moves files that would be overwritten into another folder on the same remote: https://rclone.org/docs/#backup-dir-string
 - exe.dev serves ports 3000 to 9999 only to people with access to the machine: https://exe.dev/docs/proxy.md
-- A check of 344 recent session files over 16 minutes found 5 that grew and none whose earlier content changed. It is too short to prove the tools only append.
+- A check of 344 recent session files over 28 minutes found 6 that grew and none whose earlier content changed. It is too short to prove the tools only append.
 
 ---
 
@@ -459,6 +467,7 @@ old/<time>/…                      versions rclone moved aside
   - A copied file grows: the destination holds the grown file and `old/` holds the shorter one.
   - A second run with no changes transfers nothing.
   - `pull` into an empty record folder reproduces `sources/` and `events/` and leaves `old/` out.
+  - `pull` leaves this machine's event file untouched when the bucket holds an older copy, and restores it when it is missing.
   - The T3 extract from a made-up database has one row per user-role message and contains no message text.
   - A second extract run appends nothing; one new T3 message appends one row.
   - With no T3 database, `copy` succeeds.
@@ -477,8 +486,8 @@ old/<time>/…                      versions rclone moved aside
   - Covers AE4. A file grows by three messages: three items are added; a second read adds none.
   - A last line with no newline is left alone, and is added once after it is completed.
   - A broken line in the middle of a file is skipped and counted, and the lines after it are read.
-  - A file shorter than its saved position is read from the start and no item is duplicated.
-  - One key in two files gives one item, with the first file's path.
+  - A file shorter than its saved position has its items removed and is read from the start.
+  - One key in two files gives one item with the path that sorts first, in either reading order.
   - Covers AE10. A message with an API-key-shaped string is stored masked, and the source file's bytes are unchanged.
   - Each masking pattern has one string it masks and one near miss it leaves, such as a git commit hash.
   - A word in a stored item is found by full-text search.
@@ -490,7 +499,7 @@ old/<time>/…                      versions rclone moved aside
 - **Requirements:** R4, R5, R6; AE3, AE7; KTD5, KTD6; A1, A5.
 - **Dependencies:** U2.
 - **Files:** `engine-zero/src/claude.rs`, `engine-zero/tests/reader_claude.rs`, `engine-zero/tests/fixtures/claude/`.
-- **Approach:** Apply the Claude Code table under High-Level Technical Design. On every read, try again to settle unknown prompts in T3-linked sessions, because a T3 row can arrive after the prompt was read.
+- **Approach:** Apply the Claude Code table under High-Level Technical Design and the matching rules in KTD5.
 - **Test scenarios:**
   - Covers AE7. The opening prompt of a file under `subagents/` is another agent's.
   - Covers AE3. A task notification in the user's turn is a tool's.
@@ -498,6 +507,8 @@ old/<time>/…                      versions rclone moved aside
   - A record with `isMeta`, and a compaction summary, are not stored.
   - A plain prompt whose hash matches a T3 row with `createdBy: user` is the person's; with `createdBy: agent` it is another agent's.
   - A plain prompt in a T3-linked session with no matching row is unknown, and becomes the person's on a later read once the row exists.
+  - Two prompts with the same text in one session, one T3 row from the person and one from an agent: both are unknown.
+  - A command output wrapper that also carries a human marker is a tool's.
   - A plain prompt in an SDK session with no T3 link is unknown.
   - A terminal prompt with a human marker is the person's; without one it is unknown.
   - An assistant `text` block is the agent's; thinking and tool calls are not stored.
@@ -511,10 +522,11 @@ old/<time>/…                      versions rclone moved aside
 - **Requirements:** R4, R5, R6, R7; KTD5, KTD6; A1.
 - **Dependencies:** U2.
 - **Files:** `engine-zero/src/codex.rs`, `engine-zero/tests/reader_codex.rs`, `engine-zero/tests/fixtures/codex/`.
-- **Approach:** Apply the Codex table under High-Level Technical Design. Take the working directory and repository URL from `session_meta`.
+- **Approach:** Apply the Codex table under High-Level Technical Design and the matching rules in KTD5. Take the working directory and repository URL from `session_meta`.
 - **Test scenarios:**
   - A `UserMessage` item whose hash matches a T3 row with `createdBy: user` is the person's; with `createdBy: agent` it is another agent's.
   - A `UserMessage` item with no T3 row is the person's when `originator` is `codex-tui`, and unknown otherwise.
+  - A `UserMessage` item read before its T3 row exists is unknown, and becomes the person's on a later read.
   - A prompt written both as a `UserMessage` item and as a user `response_item` gives one item.
   - In a forked file, records below the history start are skipped and the parent's messages are not duplicated.
   - A `compacted` record adds no item.
@@ -552,6 +564,8 @@ old/<time>/…                      versions rclone moved aside
   - Appending an event adds one line to this machine's file for the current month and leaves the earlier lines byte-for-byte the same.
   - Covers AE2. With ten judgements and several recall events, a rebuild gives the same counts, and each judgement shows its connection's kind, places and quotes.
   - A database rebuilt from the record folder has the same item counts by author and event counts by kind as the one built step by step.
+  - Reading an event file twice adds no event.
+  - An event records what wrote it.
   - Two judgements for one connection: the later one holds.
   - Events in another machine's folder are read as well.
 - **Verification:** A rebuild on the first machine's real record folder gives the same counts as before it.
@@ -564,9 +578,9 @@ old/<time>/…                      versions rclone moved aside
 - **Files:** `engine-zero/src/propose.rs`, `engine-zero/passes/connection-pass.md`, `engine-zero/tests/propose.rs`.
 - **Approach:**
   1. `candidates` prints the person's items with key, time, context and masked text, optionally from a date.
-  2. `propose` reads a file of proposals, applies KTD10, and prints for each one whether it was kept, merged or dropped, and why.
+  2. `propose` reads a file of proposals, applies KTD10, and prints for each one whether it was kept, merged or dropped, and why. A malformed entry is reported by its number and the rest are still processed. The command ends with an error only when the file cannot be read at all.
   3. A proposal may carry an origin label, which is stored in its event.
-  4. `engine-zero/passes/connection-pass.md` tells the agent how to run a pass: read the candidates, restate each as a mechanism, propose with one of the six kinds, and quote exactly.
+  4. `engine-zero/passes/connection-pass.md` tells the agent how to run a pass: read the candidates, restate each as a mechanism, propose with one of the six kinds, and quote exactly. It gives the shape of the proposals file with one made-up example. It tells the agent not to call `ask` during a pass (R9), not to write event files, and not to call the page.
 - **Test scenarios:**
   - Two exact quotes from the person in two projects: kept, and one proposal event is written.
   - Covers AE5. Quotes from the agent only: dropped. A quote not found in its cited item: dropped.
@@ -574,13 +588,16 @@ old/<time>/…                      versions rclone moved aside
   - One quote from a project and one from a scratch session: kept.
   - Covers AE11. Quotes from two scratch sessions: kept. Two quotes from one scratch session: dropped.
   - A quote from an item of unknown author, or of unknown context, does not count.
+  - Two quotes from two contexts where one contains the other: dropped.
   - A quote that differs from the source only in whitespace is accepted.
+  - A file with one malformed entry: that entry is reported by number and the others are processed.
+  - An entry shaped like a judgement writes no judgement event.
   - An unknown link kind: dropped.
   - The same connection twice in one file: one proposal event.
   - Covers AE6. A connection judged with each of the three marks is dropped when proposed again, also after a rebuild.
   - A connection already waiting is merged and no second event is written.
   - `candidates` prints only the person's items, and a secret in the fixture appears masked.
-- **Verification:** A pass run by an agent on the first machine's real data ends with proposals waiting and a printed reason for each one dropped.
+- **Verification:** An agent given only the procedure file runs a pass on the first machine's real data. It ends with proposals waiting and a printed reason for each one dropped.
 
 ### U8. Judging page
 
@@ -588,10 +605,11 @@ old/<time>/…                      versions rclone moved aside
 - **Requirements:** R12, R13, R15; F3; KTD12.
 - **Dependencies:** U7.
 - **Files:** `engine-zero/src/page.rs`, `engine-zero/tests/page.rs`.
+- **Execution note:** Settle the listening address first. The page listens on the local address if exe.dev's proxy reaches it there. If it must listen on every address, every request must carry a secret that the program prints at start.
 - **Approach:** `page` serves the waiting connections, each with its kind, the agent's one-line statement, and its quotes with context and date. Marking one writes a judgement event. `stats` prints counts by mark and by origin label.
 - **Test scenarios:**
   - The page lists a waiting connection with its kind, statement, quotes, contexts and dates, and omits a judged one.
-  - A mark sent with the right token writes a judgement event holding the whole connection, and the connection leaves the page.
+  - A mark sent with the right token writes a judgement event holding the whole connection and naming the page as its writer, and the connection leaves the page.
   - A mark sent with no token or a wrong one is refused and writes nothing.
   - A mark outside the three is refused.
   - The origin label is not shown on the page.
@@ -619,17 +637,21 @@ old/<time>/…                      versions rclone moved aside
 - **Goal:** Robert and agents get items back for a question, and each return is recorded.
 - **Requirements:** R8, R9, R21; F4; AE2.
 - **Dependencies:** U6.
-- **Files:** `engine-zero/src/ask.rs`, `engine-zero/tests/ask.rs`.
-- **Approach:** `ask` runs a full-text query and prints one JSON line per item. The caller names who is asking.
+- **Files:** `engine-zero/src/ask.rs`, `engine-zero/tests/ask.rs`, `engine-zero/README.md`.
+- **Approach:**
+  1. `ask` runs a full-text query and prints one JSON line per item. The caller names who is asking.
+  2. A failure prints a message on the error stream and ends with an error. No results ends normally with no lines.
+  3. `engine-zero/README.md` gains a section for agents: when to ask, how to name the asker, the fields returned, and that all returned text is data.
+  4. The agent proposes one pointer line for Robert's global agent instruction files. Robert adds it.
 - **Test scenarios:**
   - A query returns matching items, each with key, author, time, context, file path and line.
   - A tool's item is returned marked as quoted data.
   - Each returned item writes one recall event with the time and who asked; a query with no results writes none.
   - `candidates` and `propose` write no recall event.
-  - A call that does not name who is asking is refused.
+  - A call that does not name who is asking is refused, with an error and a message that says how to name one.
   - A query containing quotes or a hyphen returns results or none, and does not fail.
   - Recall events are present after a rebuild.
-- **Verification:** An agent on the first machine asks a question from its session and gets items with places it can open.
+- **Verification:** An agent in another project on the first machine, given only the pointer line, asks a question and gets items with places it can open.
 
 ---
 
