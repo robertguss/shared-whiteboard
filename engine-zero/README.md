@@ -44,6 +44,7 @@ The program reads `~/.config/engine-zero/config.json`, or the file given with `-
 
 - `engine-zero copy` copies each source folder to `sources/<machine>/<tool>/`, writes the T3 extract to `<record_folder>/sources/<machine>/t3/`, then copies the extract and `<record_folder>/events/<machine>/` to the bucket.
 - `engine-zero pull` copies `sources/` and `events/` from the bucket into the record folder, leaves `old/` out, and never replaces this machine's own event files; it only restores a missing one.
+- `engine-zero read` reads what is new in the record folder's `.jsonl` files into the database, which it creates on first use. Each file resumes where the last read stopped, a last line without a newline waits for a later read, and a file that became shorter is read again from the start. Secrets are masked in what is stored; the record files are never changed. At the end of every read, the author of each prompt is worked out again from the T3 extract. It prints how many items were added, how many broken lines were skipped, and, for each tool, how many records were stored and skipped by record type. The database can be deleted at any time; the next `read` builds it again.
 
 ## Daily schedule
 

@@ -1,5 +1,5 @@
 use clap::{Parser, Subcommand};
-use engine_zero::{config::Config, copy};
+use engine_zero::{config::Config, copy, ingest};
 use std::path::PathBuf;
 use std::process::ExitCode;
 
@@ -15,6 +15,7 @@ struct Cli {
 enum Command {
     Copy,
     Pull,
+    Read,
 }
 
 fn main() -> ExitCode {
@@ -26,6 +27,7 @@ fn main() -> ExitCode {
     let result = Config::load(&path).and_then(|config| match cli.command {
         Command::Copy => copy::stamp_now().and_then(|stamp| copy::copy(&config, &stamp)),
         Command::Pull => copy::pull(&config),
+        Command::Read => ingest::run(&config),
     });
     match result {
         Ok(()) => ExitCode::SUCCESS,

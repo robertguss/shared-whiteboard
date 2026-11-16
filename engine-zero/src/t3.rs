@@ -1,7 +1,7 @@
 use crate::Result;
+use crate::store::text_hash;
 use rusqlite::{Connection, OpenFlags, Row};
 use serde::Serialize;
-use sha2::{Digest, Sha256};
 use std::collections::HashSet;
 use std::fs::{self, OpenOptions};
 use std::io::Write;
@@ -54,7 +54,7 @@ pub fn extract(database: &Path, out_dir: &Path) -> Result<()> {
                 created_by: row.get(3)?,
                 creation_source: row.get(4)?,
                 created_at: row.get(5)?,
-                text_sha256: text.map(|t| hex(&Sha256::digest(t.trim()))),
+                text_sha256: text.as_deref().map(text_hash),
             })
         })?;
         let projects = query(&db, PROJECTS, |row| {
@@ -78,10 +78,6 @@ fn query<T>(
     map: impl FnMut(&Row) -> rusqlite::Result<T>,
 ) -> rusqlite::Result<Vec<T>> {
     db.prepare(sql)?.query_map([], map)?.collect()
-}
-
-fn hex(bytes: &[u8]) -> String {
-    bytes.iter().map(|b| format!("{b:02x}")).collect()
 }
 
 fn append_new<T: Serialize>(path: &Path, rows: &[T]) -> Result<()> {
