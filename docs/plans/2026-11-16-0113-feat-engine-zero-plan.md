@@ -23,7 +23,7 @@ execution: code
 ### Summary
 
 Engine zero copies Robert's agent session files to one private bucket, reads them into units of thinking, stores them in SQLite, answers questions from Robert and their agents, and proposes connections across projects with evidence.
-Robert judges each connection, and the judgements are kept in a log outside the engine.
+Robert judges each connection, and the judgements are kept in an event log outside the engine.
 Its second job is to show which operations are slow or awkward, as evidence for a custom storage core.
 
 ### Problem Frame
@@ -37,7 +37,7 @@ On one machine, 18 days of work produced 2.2 GB of Claude Code sessions and 650 
 
 ### Key Decisions
 
-- **The sources and the judgements live outside the engine, and every engine is disposable.** Each earlier attempt lost its data with its tool. Governs R2, R3, R13. (session-settled: user-approved — chosen over keeping data inside the engine: the engine can then be replaced without a restart)
+- **The sources and the judgements live outside the engine, and every engine is disposable.** Each earlier attempt lost its data with its tool. Governs R2, R3, R9, R13. (session-settled: user-approved — chosen over keeping data inside the engine: the engine can then be replaced without a restart)
 - **The source is agent session files from both machines, copied to one bucket.** They already exist, are already append-only, and need no filing. Governs R1. (session-settled: user-directed — chosen over a new hand-kept record: Robert proposed it because the data and its append-only form already exist)
 - **SQLite first; a custom storage core later.** Governs R3. (session-settled: user-directed — chosen over starting a custom storage core now: a working engine on real data shows what the core must be good at)
 - **The project writes its own reader. cass is neither a dependency nor a fork.** Governs R4. (session-settled: user-directed — chosen over running cass: it would become a dependency)
@@ -68,7 +68,7 @@ This plan covers engine zero only. The breakdown below is the current understand
 
 - R1. Claude Code and Codex session files from both of Robert's machines are copied to one private bucket.
 - R2. The copy never removes a file from the bucket. A file that has grown on the machine is updated; a file the machine has deleted stays.
-- R3. The engine's database can be deleted and rebuilt from the bucket copy and the judgement log alone.
+- R3. The engine's database can be deleted and rebuilt from the bucket copy and the event log (R13) alone.
 
 **Reading**
 
@@ -80,7 +80,7 @@ This plan covers engine zero only. The breakdown below is the current understand
 **Asking**
 
 - R8. Robert and their agents can ask the engine questions from a command line and get items back, each with its pointer to the source.
-- R9. Every item returned to a question is stored as a recall event with its time and who asked.
+- R9. Every item returned to a question is added to the event log (R13) as a recall event, with its time and who asked.
 
 **Connecting**
 
@@ -90,23 +90,24 @@ This plan covers engine zero only. The breakdown below is the current understand
 **Judging**
 
 - R12. Robert sees proposed connections on a plain page and marks each one as real and new, real and already known, or not real.
-- R13. Each judgement is added as an event to a log that lives beside the bucket copy, outside the engine. Events are never edited.
+- R13. Each judgement is added as an event to the event log, which lives beside the bucket copy, outside the engine. Events are never edited.
 - R14. A connection Robert marked not real is not proposed again.
 
 **Privacy**
 
-- R15. The bucket, the database and the judgement log are private and never enter the public repository. Test data in the repository contains no real session content.
+- R15. The bucket, the database and the event log are private and never enter the public repository. Test data in the repository contains no real session content.
 
 ```mermaid
 flowchart TB
   M1[Session files, machine 1] --> B[Private bucket, never deletes]
   M2[Session files, machine 2] --> B
   B --> R[Reader: units of thinking]
-  J[Judgement log] --> E
+  J[Event log: judgements and recalls] --> E
   R --> E[Engine zero on SQLite, disposable]
   E --> Q[Answers for Robert and agents]
   E --> P[Proposed connections, plain page]
   P --> J
+  Q --> J
 ```
 
 ### Key Flows
@@ -124,7 +125,7 @@ flowchart TB
 - F3. Judge
   - **Trigger:** Robert opens the page.
   - **Actors:** A1
-  - **Steps:** Robert reads a connection, opens its evidence if they wish, and marks it. The mark is added to the judgement log.
+  - **Steps:** Robert reads a connection, opens its evidence if they wish, and marks it. The mark is added to the event log.
   - **Covered by:** R12, R13
 - F4. Ask
   - **Trigger:** Robert or an agent has a question, for example at the start of a session.
@@ -134,13 +135,13 @@ flowchart TB
 - F5. Rebuild
   - **Trigger:** The engine is replaced or its database is lost.
   - **Actors:** A1, A3
-  - **Steps:** The database is built again from the bucket copy and the judgement log. Every judgement is present afterwards.
-  - **Covered by:** R3, R13
+  - **Steps:** The database is built again from the bucket copy and the event log. Every judgement and every recall event is present afterwards.
+  - **Covered by:** R3, R9, R13
 
 ### Acceptance Examples
 
 - AE1. **Covers R2.** Given a session file is in the bucket, when that file is deleted from the machine and the copy runs again, the file is still in the bucket.
-- AE2. **Covers R3, R13.** Given Robert has judged ten connections, when the database is deleted and rebuilt, all ten judgements are present.
+- AE2. **Covers R3, R9, R13.** Given Robert has judged ten connections and the engine has answered questions, when the database is deleted and rebuilt, all ten judgements and all recall events are present.
 - AE3. **Covers R5.** Given a session where a tool inserted a report into the person's turn, when the reader runs, that report is not recorded as something the person said.
 - AE4. **Covers R7.** Given a session file that has grown by three messages since it was last read, when the reader runs, exactly three items are added.
 - AE5. **Covers R11.** Given a proposal that quotes text found in no source, when the rules run, the proposal is dropped and never reaches the page.
