@@ -85,3 +85,7 @@ Robert confirmed the scope of the first engine and chose Rust. Wrote the require
 ## [2026-11-16] decision | Plan reviewed and changed
 
 At Robert's request, six reviewers and a council of three models reviewed the requirements plan. All three council members: ready after named changes. Robert chose to apply the eleven fixes and the agent's recommendation on four decisions: judge the hand-run connections first, a reader of messages only, masked secrets in the engine, and agent asking built last. Record: `raw/sessions/2026-11-16-plan-review.md`. No second review round was run.
+
+## [2026-11-16] decision | Implementation plan written and reviewed
+
+Robert chose to write the implementation plan. The agent measured both session formats on the first machine and added fourteen technical decisions, the units, a verification table and a definition of done to the plan. Robert decided that a session with no repository counts as its own context. Two design checks and a five-reviewer review followed; their fixes are in the plan, which now has eleven units. One question is left for Robert: what the first judging does with hand-run connections that have no session quotes. Record: `raw/sessions/2026-11-16-implementation-plan.md`.

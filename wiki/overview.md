@@ -1,13 +1,13 @@
 ---
 type: overview
 updated: 2026-11-16
-sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sessions/2026-11-16-plan-review.md, raw/sources/2026-11-15-tool-scan.md]
+sources: [raw/sessions/2026-11-15-first-brainstorm.md, raw/sessions/2026-11-15-shape-decision.md, raw/sessions/2026-11-15-data-first-reframe.md, raw/sessions/2026-11-15-engine-research-kickoff.md, raw/sessions/2026-11-15-north-star-open.md, raw/sessions/2026-11-15-external-brain.md, raw/sessions/2026-11-15-why-it-keeps-coming-back.md, raw/sessions/2026-11-15-transcripts-as-the-record.md, raw/sessions/2026-11-15-sqlite-first.md, raw/sessions/2026-11-15-build-our-own-reader.md, raw/sessions/2026-11-16-scope-confirmed-rust.md, raw/sessions/2026-11-16-plan-review.md, raw/sessions/2026-11-16-implementation-plan.md, raw/sources/2026-11-15-tool-scan.md]
 ---
 # Overview
 
 **What this is:** a database that acts as an external form of one person's brain, across all their projects and ideas, which AI agents can read, understand and add to. The agent makes or proposes connections the person would not see unaided. Visual views show the same data as a board, a timeline and a status view.
 
-**Where it stands:** the first engine has a requirements plan, [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md), reviewed by six reviewers and a council of three models and changed after it. The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it. Nothing is built.
+**Where it stands:** the first engine has a full plan, [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md): requirements, reviewed by six reviewers and a council of three models, and an implementation part of eleven units, reviewed by five reviewers. The project began on 15 November 2026 as a visual whiteboard and moved, the same day, down to the data and the engine under it. Nothing is built.
 
 **What it is not:** a "second brain" or a personal knowledge management tool. Robert sees the overlap and wants something bigger and deeper than linked notes.
 
@@ -37,6 +37,8 @@ One person's projects and ideas overlap and inform one another. There is no sing
 | The first reader stores messages only. Decisions, attempts and stances wait. | Decided by Robert, on the agent's proposal |
 | Secrets are masked in what the engine stores. The bucket copy stays raw. | Decided by Robert, on the agent's proposal |
 | Agents asking the engine stays in the first version and is built last. | Decided by Robert, on the agent's proposal |
+| A session with no repository counts as its own context when a connection needs two. | Decided by Robert, on the agent's proposal |
+| One Rust program beside rclone; a coding agent runs the model step; a message is Robert's only on positive evidence. | Proposed, in the plan |
 | Brain-like memory for an agent alone is crowded; memory for a person and an agent thinking together is open. | Proposed, from one research pass |
 | The storage core is part of the research, because its design may influence the memory and association layer. | Decided by Robert |
 | It covers all of Robert's projects and ideas in one place. Mo is one part of it. | Decided by Robert |
@@ -52,7 +54,7 @@ Details: [the problem](the-problem.md), [requirements](requirements.md), [shape 
 
 ## Next
 
-Turn the [engine zero plan](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md) into an implementation plan, then build it. Robert still has to check whether old session files exist on the second machine and set its retention. The engine research continues beside it.
+Build [engine zero](../docs/plans/2026-11-16-0113-feat-engine-zero-plan.md), the copy first. Robert provides the bucket and its credentials, and still has to check whether old session files exist on the second machine and set its retention. One question is open in the plan: what the first judging does with hand-run connections that have no session quotes. The engine research continues beside it.
 
 ## An idea to hold
 
